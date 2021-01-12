@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1042819463433",
+    "firebase_url": "https://seti-app-flutter.firebaseio.com",
+    "project_id": "seti-app-flutter",
+    "storage_bucket": "seti-app-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042819463433:android:e14b6a65def3b5ac703bd8",
+        "android_client_info": {
+          "package_name": "com.seti.mylamp_flutter_v4_stable"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1042819463433-69d7k4q5bt8ltk62qvg04nllkf2oo3e0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBqcv_0EyhPAuOLzGKgP4Ew1DaZUifBZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1042819463433-69d7k4q5bt8ltk62qvg04nllkf2oo3e0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
