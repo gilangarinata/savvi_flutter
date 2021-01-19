@@ -1,5 +1,4 @@
 import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -20,7 +19,6 @@ import 'package:mylamp_flutter_v4_stable/ui/dashboard/dashboard_contract.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/delete_dialog.dart';
 import 'package:mylamp_flutter_v4_stable/ui/detail/hardware_detail_screen.dart';
 import 'package:mylamp_flutter_v4_stable/ui/introduction/introduction.dart';
-import 'package:mylamp_flutter_v4_stable/ui/userdetail/user_detail_screen.dart';
 import 'package:mylamp_flutter_v4_stable/utils/tools.dart';
 import 'package:mylamp_flutter_v4_stable/widget/my_snackbar.dart';
 import 'package:mylamp_flutter_v4_stable/widget/progress_loading.dart';
@@ -28,13 +26,18 @@ import 'package:mylamp_flutter_v4_stable/widget/scenario_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-class DashboardScreen extends StatefulWidget {
+class UserDetailScreen extends StatefulWidget {
+  String userId;
+  String position;
+  String username;
+
+  UserDetailScreen(this.userId,this.position, this.username);
+
   @override
-  _DashboardScreenState createState() => _DashboardScreenState();
+  _UserDetailScreenState createState() => _UserDetailScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
-
+class _UserDetailScreenState extends State<UserDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -43,14 +46,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
           create: (context) => DashboardBloc(DashboardRepositoryImpl()),
         )
       ],
-      child: DashboardContent(),
+      child: DashboardContent(widget.userId, widget.position, widget.username),
     );
   }
 }
 
 class DashboardContent extends StatefulWidget {
+  String userId;
+  String position;
+  String username;
+
+
+  DashboardContent(this.userId, this.position, this.username);
+
   @override
-  _DashboardContentState createState() => _DashboardContentState();
+  _DashboardContentState createState() => _DashboardContentState(username,position,userId);
 }
 
 class _DashboardContentState extends State<DashboardContent> {
@@ -71,17 +81,11 @@ class _DashboardContentState extends State<DashboardContent> {
   bool isControlAllowed = false;
   String KEY_SU_1 = "superuser1";
 
+  _DashboardContentState(this.username, this.position, this.userId);
+
   void getPrefData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      username = prefs.getString(PrefData.USERNAME);
-      position = prefs.getString(PrefData.POSITION);
-      referral = prefs.getString(PrefData.REFERRAL);
-    });
-
-    isControlAllowed = position == KEY_SU_1 ? true : false;
-
-    userId = prefs.getString(PrefData.USER_ID);
+    isControlAllowed = true;
     token = prefs.getString(PrefData.TOKEN);
     bloc = BlocProvider.of<DashboardBloc>(context);
     bloc.add(FetchDevice(userId, token));
@@ -106,21 +110,16 @@ class _DashboardContentState extends State<DashboardContent> {
           automaticallyImplyLeading: false,
           brightness: Brightness.dark,
           iconTheme: IconThemeData(color: MyColors.grey_60),
-          title: MyText.myTextHeader1("Home", MyColors.grey_80),
-          actions: <Widget>[
-            Visibility(
-              visible: isControlAllowed,
-              child: IconButton(
-                  icon: Icon(
-                    Icons.bluetooth,
-                    color: MyColors.grey_80,
-                  ),
-                  onPressed: () {
-                    // showDialog(context: context,builder: (_) => SetupBluetoothDialog());
-                    Tools.addScreen(context, DiscoveryPage(start: true,));
-                  }),
-            ), // overflow menu
-          ]),
+          title: Row(
+            children: [
+              Icon(Icons.person, color: MyColors.grey_40,),
+              SizedBox(width: 10,),
+              MyText.myTextHeader1(username, MyColors.grey_40),
+              Spacer(),
+              MyText.myTextDescription(position, MyColors.grey_40)
+            ],
+          ),
+          ),
       body: BlocListener<DashboardBloc, DashboardState>(
         listener: (context, event) {
           if (event is InitialState) {
@@ -167,54 +166,6 @@ class _DashboardContentState extends State<DashboardContent> {
                       onRefresh: onRefreshData,
                       child: ListView(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 20),
-                            child: Row(
-                              children: [
-                                InkWell(
-                                  child: CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: MyColors.primary,
-                                    child: CircleAvatar(
-                                      backgroundImage:
-                                          AssetImage('assets/img_person.jpg'),
-                                      radius: 28,
-                                    ),
-                                  ),
-                                  onTap: () async {
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                    prefs.clear();
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (BuildContext ctx) =>
-                                                IntroductionScreen()));
-                                  },
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    MyText.myTextHeader2(
-                                        username, MyColors.grey_80),
-                                    MyText.myTextDescription(
-                                        position, MyColors.primary),
-                                    MyText.myTextDescription(
-                                        referral, MyColors.primary)
-                                  ],
-                                ),
-                                Expanded(
-                                  child: SizedBox(),
-                                ),
-                                MyText.myTextHeader2(
-                                    "$countDevice Lamps", MyColors.grey_80),
-                              ],
-                            ),
-                          ),
                           ListView.builder(
                             padding: EdgeInsets.only(top: 2),
                             scrollDirection: Axis.vertical,
@@ -234,44 +185,6 @@ class _DashboardContentState extends State<DashboardContent> {
                     ),
                   ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: "btn1",
-        backgroundColor: MyColors.primary,
-        onPressed: () {
-          // if(isControlAllowed) {
-            showDialog(
-                context: context,
-                builder: (_) => AddDeviceDialog(userId, token)).then((value) {
-              if (value) {
-                bloc.add(FetchDevice(userId, token));
-              }
-            });
-          // }else{
-          //   Tools.showToast(MyStrings.superuserPrivilege);
-          // }
-        },
-        // tooltip: 'Increment',
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      bottomNavigationBar: BottomAppBar(
-          color: MyColors.brownDark,
-          shape: CircularNotchedRectangle(),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.home),
-                color: Colors.white,
-                onPressed: () {
-                  //
-                },
-              ),
-            ],
-          )),
     );
   }
 
@@ -311,9 +224,9 @@ class _DashboardContentState extends State<DashboardContent> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Icon(Icons.lightbulb, color: item[pos].hardware.active ? item[pos].hardware.lamp ? item[pos].hardware.brightnessSchedule == 0 ? Colors.red : Colors.green :  item[pos].hardware.brightness == 0 ? Colors.red : Colors.green : Colors.grey , ),
+                          Icon(Icons.lightbulb, color:  item[pos].hardware.active ? item[pos].hardware.lamp ? item[pos].hardware.brightnessSchedule == 0 ? Colors.red : Colors.green :  item[pos].hardware.brightness == 0 ? Colors.red : Colors.green : Colors.grey , ),
                           SizedBox(height: 5,),
-                          Text(item[pos].hardware.active ? item[pos].hardware.lamp ? item[pos].hardware.brightnessSchedule == 0 ? "Off" : "On" :  item[pos].hardware.brightness == 0 ? "Off" : "On" : "Offline", style: TextStyle(fontSize: 10) )
+                          Text(item[pos].hardware.active ? item[pos].hardware.lamp ? item[pos].hardware.brightnessSchedule == 0 ? "Off" : "On" :  item[pos].hardware.brightness == 0 ? "Off" : "On" : "Offline", style: TextStyle(fontSize: 10), )
                         ],
                       ),
                     ),

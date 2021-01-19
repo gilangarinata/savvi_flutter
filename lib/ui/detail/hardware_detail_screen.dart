@@ -31,6 +31,7 @@ import 'package:mylamp_flutter_v4_stable/widget/scenario_view.dart';
 import 'package:mylamp_flutter_v4_stable/widget/slider.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class HardwareDetailScreen extends StatefulWidget {
   String hardwareId;
@@ -587,17 +588,19 @@ class _DashboardContentState extends State<DashboardContent> {
                     ),
                   ),
       ),
-      floatingActionButton: isControlAllowed ? isLampLoading
+      floatingActionButton: isControlAllowed ?
+      isLampLoading
           ? floatingLoading()
-          : FloatingActionButton(
-              heroTag: "btn1",
-              elevation: 0,
-              backgroundColor: item == null
-                  ? Colors.grey
-                  : item.lamp ?? false
-                      ? Colors.green
-                      : Colors.grey,
-              onPressed: () {
+          : ToggleSwitch(
+        minWidth: 55.0,
+        initialLabelIndex: item.lamp ? 0 : 1,
+        activeBgColor: Colors.cyan,
+        activeFgColor: Colors.white,
+        inactiveBgColor: Colors.white54,
+        inactiveFgColor: Colors.white,
+        labels: ['S', 'M'],
+        icons: [Icons.schedule, Icons.emoji_people],
+              onToggle: (index) {
                 setState(() {
                   isLampLoading = true;
                 });
@@ -611,10 +614,6 @@ class _DashboardContentState extends State<DashboardContent> {
                   bloc.add(UpdateLampEvent(req.reqBody(), token));
                 }
               },
-              child: Icon(
-                Icons.power_settings_new,
-                color: Colors.white,
-              ),
             ) : Container(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Container(

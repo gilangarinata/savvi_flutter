@@ -7,9 +7,9 @@ class MyStrings {
   static const String privacyPolicy = "Privacy Policy";
   static const String terms = "Terms and Conditions";
 
-  static const String signUpPage = "Sign Up Page";
+  static const String signUpPage = "Sign Up";
   static const String signUpSuccess = "Sign Up Success.";
-  static const String signInPage = "Sign In Page";
+  static const String signInPage = "Sign In";
 
   static const String signIn = "Sign In";
   static const String map = "Maps";

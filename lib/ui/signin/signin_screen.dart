@@ -93,115 +93,127 @@ class _SignInContentState extends State<SignInContent> {
           },
           child: Container(
             color: Colors.white,
-            child: Column(
+            child: Stack(
               children: <Widget>[
-                Image.asset(
-                  "assets/back_sign.png",
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        MyText.myTextHeader1(
-                            MyStrings.signInPage, MyColors.grey_80),
-                        TextFormField(
-                          controller: _usernameController,
-                          style: MyFieldStyle.myFieldStylePrimary(),
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return MyStrings.mustNotBeEmpty;
-                            }
-                            return null;
-                          },
-                          cursorColor: MyColors.primary,
-                          decoration: InputDecoration(
-                            icon: Container(
-                                child:
-                                    Icon(Icons.person, color: MyColors.grey_60),
-                                margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
-                            labelText: MyStrings.username,
-                            labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
-                            enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
-                            focusedBorder:
-                                MyFieldStyle.myUnderlineFocusFieldStyle(),
-                          ),
-                        ),
-                        TextFormField(
-                          controller: _passwordController,
-                          style: MyFieldStyle.myFieldStylePrimary(),
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return MyStrings.mustNotBeEmpty;
-                            } else {
-                              if (!Validator.passwordValidation(value)) {
-                                return MyStrings.passwordValidation;
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: Image.asset(
+                    "assets/img_login.jpg",
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    color: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Image.asset('assets/logo.png',width: 170,),
+                          SizedBox(height: 10,),
+                          MyText.myTextHeader1(
+                              MyStrings.signInPage, MyColors.grey_80),
+                          TextFormField(
+                            controller: _usernameController,
+                            style: MyFieldStyle.myFieldStylePrimary(),
+                            keyboardType: TextInputType.text,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return MyStrings.mustNotBeEmpty;
                               }
-                            }
-                            return null;
-                          },
-                          keyboardType: TextInputType.text,
-                          obscureText: true,
-                          cursorColor: MyColors.primary,
-                          decoration: InputDecoration(
-                            icon: Container(
-                                child: Icon(Icons.vpn_key,
-                                    color: MyColors.grey_60),
-                                margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
-                            labelText: MyStrings.password,
-                            labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
-                            enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
-                            focusedBorder:
-                                MyFieldStyle.myUnderlineFocusFieldStyle(),
+                              return null;
+                            },
+                            cursorColor: MyColors.primary,
+                            decoration: InputDecoration(
+                              icon: Container(
+                                  child:
+                                      Icon(Icons.person, color: MyColors.grey_60),
+                                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
+                              labelText: MyStrings.username,
+                              labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
+                              enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
+                              focusedBorder:
+                                  MyFieldStyle.myUnderlineFocusFieldStyle(),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          width: double.infinity,
-                          height: 50,
-                          child: Stack(
-                            children: <Widget>[
-                              Visibility(
-                                visible: !_isLoading,
-                                child: Container(
-                                  width: double.infinity,
-                                  child: MyButton.myPrimaryButton(
-                                    MyStrings.signIn,
-                                    () {
-                                      if (_formKey.currentState.validate()) {
-                                        SignInRequest request =
-                                            new SignInRequest(
-                                                _usernameController.text.trim(),
-                                                _passwordController.text
-                                                    .trim());
-                                        _bloc.add(
-                                            FetchSignIn(request.reqBody()));
-                                      }
-                                    },
+                          TextFormField(
+                            controller: _passwordController,
+                            style: MyFieldStyle.myFieldStylePrimary(),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return MyStrings.mustNotBeEmpty;
+                              } else {
+                                if (!Validator.passwordValidation(value)) {
+                                  return MyStrings.passwordValidation;
+                                }
+                              }
+                              return null;
+                            },
+                            keyboardType: TextInputType.text,
+                            obscureText: true,
+                            cursorColor: MyColors.primary,
+                            decoration: InputDecoration(
+                              icon: Container(
+                                  child: Icon(Icons.vpn_key,
+                                      color: MyColors.grey_60),
+                                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
+                              labelText: MyStrings.password,
+                              labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
+                              enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
+                              focusedBorder:
+                                  MyFieldStyle.myUnderlineFocusFieldStyle(),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            width: double.infinity,
+                            height: 50,
+                            child: Stack(
+                              children: <Widget>[
+                                Visibility(
+                                  visible: !_isLoading,
+                                  child: Container(
+                                    width: double.infinity,
+                                    child: MyButton.myPrimaryButton(
+                                      MyStrings.signIn,
+                                      () {
+                                        if (_formKey.currentState.validate()) {
+                                          SignInRequest request =
+                                              new SignInRequest(
+                                                  _usernameController.text.trim(),
+                                                  _passwordController.text
+                                                      .trim());
+                                          _bloc.add(
+                                              FetchSignIn(request.reqBody()));
+                                        }
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Visibility(
-                                  visible: _isLoading,
-                                  child: ProgressLoading(
-                                    size: 13,
-                                    stroke: 2,
+                                Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Visibility(
+                                    visible: _isLoading,
+                                    child: ProgressLoading(
+                                      size: 13,
+                                      stroke: 2,
+                                    ),
                                   ),
-                                ),
-                              )
-                            ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 )

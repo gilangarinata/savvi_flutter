@@ -15,7 +15,8 @@ class IntroductionScreen extends StatelessWidget {
       child: Stack(
         children: <Widget>[
           Container(
-            child: Image.asset('assets/back_dashboard.png'),
+            width: MediaQuery.of(context).size.width,
+            child: Image.asset('assets/back_dashboard.jpg',fit: BoxFit.cover,),
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -31,7 +32,9 @@ class IntroductionScreen extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
+                    Image.asset('assets/logo.png',width: 170,),
                     MyText.myTextHeader1(
                         MyStrings.introHeader, MyColors.grey_80),
                     SizedBox(

@@ -10,4 +10,9 @@ class SharedPreference {
     prefs.setString(PrefData.POSITION, userInfo.position);
     prefs.setString(PrefData.REFERRAL, userInfo.referal);
   }
+
+  static void setLogout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+  }
 }

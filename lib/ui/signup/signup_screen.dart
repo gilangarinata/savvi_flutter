@@ -77,166 +77,178 @@ class _SignUpContentState extends State<SignUpContent> {
           },
           child: Container(
             color: Colors.white,
-            child: Column(
+            child: Stack(
               children: <Widget>[
-                Image.asset(
-                  "assets/back_signup.png",
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        MyText.myTextHeader1(
-                            MyStrings.signUpPage, MyColors.grey_80),
-                        TextFormField(
-                          controller: _usernameController,
-                          style: MyFieldStyle.myFieldStylePrimary(),
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return MyStrings.mustNotBeEmpty;
-                            }
-                            return null;
-                          },
-                          cursorColor: MyColors.primary,
-                          decoration: InputDecoration(
-                            icon: Container(
-                                child:
-                                    Icon(Icons.person, color: MyColors.grey_60),
-                                margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
-                            labelText: MyStrings.username,
-                            labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
-                            enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
-                            focusedBorder:
-                                MyFieldStyle.myUnderlineFocusFieldStyle(),
-                          ),
-                        ),
-                        TextFormField(
-                          controller: _emailController,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return MyStrings.mustNotBeEmpty;
-                            } else {
-                              if (!Validator.emailValidation(value)) {
-                                return MyStrings.validEmail;
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: Image.asset(
+                    "assets/img_register.jpg",
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    color: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Image.asset('assets/logo.png',width: 170,),
+                          SizedBox(height: 10,),
+                          MyText.myTextHeader1(
+                              MyStrings.signUpPage, MyColors.grey_80),
+                          TextFormField(
+                            controller: _usernameController,
+                            style: MyFieldStyle.myFieldStylePrimary(),
+                            keyboardType: TextInputType.text,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return MyStrings.mustNotBeEmpty;
                               }
-                            }
-                            return null;
-                          },
-                          style: MyFieldStyle.myFieldStylePrimary(),
-                          keyboardType: TextInputType.text,
-                          cursorColor: MyColors.primary,
-                          decoration: InputDecoration(
-                            icon: Container(
-                                child:
-                                    Icon(Icons.mail, color: MyColors.grey_60),
-                                margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
-                            labelText: MyStrings.email,
-                            labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
-                            enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
-                            focusedBorder:
-                                MyFieldStyle.myUnderlineFocusFieldStyle(),
+                              return null;
+                            },
+                            cursorColor: MyColors.primary,
+                            decoration: InputDecoration(
+                              icon: Container(
+                                  child:
+                                      Icon(Icons.person, color: MyColors.grey_60),
+                                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
+                              labelText: MyStrings.username,
+                              labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
+                              enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
+                              focusedBorder:
+                                  MyFieldStyle.myUnderlineFocusFieldStyle(),
+                            ),
                           ),
-                        ),
-                        TextFormField(
-                          controller: _referralController,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return MyStrings.mustNotBeEmpty;
-                            }
-                            return null;
-                          },
-                          style: MyFieldStyle.myFieldStylePrimary(),
-                          keyboardType: TextInputType.text,
-                          cursorColor: MyColors.primary,
-                          decoration: InputDecoration(
-                            icon: Container(
-                                child: Icon(Icons.person_add,
-                                    color: MyColors.grey_60),
-                                margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
-                            labelText: MyStrings.referral,
-                            labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
-                            enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
-                            focusedBorder:
-                                MyFieldStyle.myUnderlineFocusFieldStyle(),
-                          ),
-                        ),
-                        TextFormField(
-                          controller: _passwordController,
-                          style: MyFieldStyle.myFieldStylePrimary(),
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return MyStrings.mustNotBeEmpty;
-                            } else {
-                              if (!Validator.passwordValidation(value)) {
-                                return MyStrings.passwordValidation;
+                          TextFormField(
+                            controller: _emailController,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return MyStrings.mustNotBeEmpty;
+                              } else {
+                                if (!Validator.emailValidation(value)) {
+                                  return MyStrings.validEmail;
+                                }
                               }
-                            }
-                            return null;
-                          },
-                          keyboardType: TextInputType.text,
-                          obscureText: true,
-                          cursorColor: MyColors.primary,
-                          decoration: InputDecoration(
-                            icon: Container(
-                                child: Icon(Icons.vpn_key,
-                                    color: MyColors.grey_60),
-                                margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
-                            labelText: MyStrings.password,
-                            labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
-                            enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
-                            focusedBorder:
-                                MyFieldStyle.myUnderlineFocusFieldStyle(),
+                              return null;
+                            },
+                            style: MyFieldStyle.myFieldStylePrimary(),
+                            keyboardType: TextInputType.text,
+                            cursorColor: MyColors.primary,
+                            decoration: InputDecoration(
+                              icon: Container(
+                                  child:
+                                      Icon(Icons.mail, color: MyColors.grey_60),
+                                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
+                              labelText: MyStrings.email,
+                              labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
+                              enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
+                              focusedBorder:
+                                  MyFieldStyle.myUnderlineFocusFieldStyle(),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          width: double.infinity,
-                          height: 50,
-                          child: Stack(
-                            children: <Widget>[
-                              Visibility(
-                                visible: !_isLoading,
-                                child: Container(
-                                  width: double.infinity,
-                                  child: MyButton.myPrimaryButton(
-                                    MyStrings.createAccount,
-                                    () {
-                                      if (_formKey.currentState.validate()) {
-                                        SignUpRequest request =
-                                            new SignUpRequest(
-                                                _usernameController.text.trim(),
-                                                _passwordController.text.trim(),
-                                                _referralController.text.trim(),
-                                                _emailController.text.trim());
-                                        _bloc.add(
-                                            FetchSignUp(request.reqBody()));
-                                      }
-                                    },
+                          TextFormField(
+                            controller: _referralController,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return MyStrings.mustNotBeEmpty;
+                              }
+                              return null;
+                            },
+                            style: MyFieldStyle.myFieldStylePrimary(),
+                            keyboardType: TextInputType.text,
+                            cursorColor: MyColors.primary,
+                            decoration: InputDecoration(
+                              icon: Container(
+                                  child: Icon(Icons.person_add,
+                                      color: MyColors.grey_60),
+                                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
+                              labelText: MyStrings.referral,
+                              labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
+                              enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
+                              focusedBorder:
+                                  MyFieldStyle.myUnderlineFocusFieldStyle(),
+                            ),
+                          ),
+                          TextFormField(
+                            controller: _passwordController,
+                            style: MyFieldStyle.myFieldStylePrimary(),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return MyStrings.mustNotBeEmpty;
+                              } else {
+                                if (!Validator.passwordValidation(value)) {
+                                  return MyStrings.passwordValidation;
+                                }
+                              }
+                              return null;
+                            },
+                            keyboardType: TextInputType.text,
+                            obscureText: true,
+                            cursorColor: MyColors.primary,
+                            decoration: InputDecoration(
+                              icon: Container(
+                                  child: Icon(Icons.vpn_key,
+                                      color: MyColors.grey_60),
+                                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
+                              labelText: MyStrings.password,
+                              labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
+                              enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
+                              focusedBorder:
+                                  MyFieldStyle.myUnderlineFocusFieldStyle(),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            width: double.infinity,
+                            height: 50,
+                            child: Stack(
+                              children: <Widget>[
+                                Visibility(
+                                  visible: !_isLoading,
+                                  child: Container(
+                                    width: double.infinity,
+                                    child: MyButton.myPrimaryButton(
+                                      MyStrings.createAccount,
+                                      () {
+                                        if (_formKey.currentState.validate()) {
+                                          SignUpRequest request =
+                                              new SignUpRequest(
+                                                  _usernameController.text.trim(),
+                                                  _passwordController.text.trim(),
+                                                  _referralController.text.trim(),
+                                                  _emailController.text.trim());
+                                          _bloc.add(
+                                              FetchSignUp(request.reqBody()));
+                                        }
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Visibility(
-                                  visible: _isLoading,
-                                  child: ProgressLoading(
-                                    size: 13,
-                                    stroke: 2,
+                                Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Visibility(
+                                    visible: _isLoading,
+                                    child: ProgressLoading(
+                                      size: 13,
+                                      stroke: 2,
+                                    ),
                                   ),
-                                ),
-                              )
-                            ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 )

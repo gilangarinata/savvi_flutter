@@ -15,7 +15,7 @@
 
     <application
         android:name=".Application"
-        android:label="SETI Smart"
+        android:label="Savvi"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
         <activity

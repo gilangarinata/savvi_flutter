@@ -35,6 +35,8 @@ class Result {
     this.id,
     this.hardware,
     this.user,
+    this.position,
+    this.username
   });
 
   String name;
@@ -42,6 +44,8 @@ class Result {
   String id;
   Hardware hardware;
   String user;
+  String position;
+  String username;
 
   factory Result.fromJson(Map<String, dynamic> json) => Result(
     name: json["name"],
@@ -49,6 +53,8 @@ class Result {
     id: json["_id"],
     hardware: Hardware.fromJson(json["hardware"]),
     user: json["user"],
+    position: json["position"],
+    username: json["username"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -57,6 +63,8 @@ class Result {
     "_id": id,
     "hardware": hardware.toJson(),
     "user": user,
+    "position" : position,
+    "username" : username
   };
 }
 
@@ -66,6 +74,8 @@ class Hardware {
     this.name,
     this.hardwareId,
     this.brightness,
+    this.brightnessSchedule,
+    this.active,
     this.lamp,
   });
 
@@ -73,6 +83,8 @@ class Hardware {
   String name;
   String hardwareId;
   int brightness;
+  int brightnessSchedule;
+  bool active;
   bool lamp;
 
   factory Hardware.fromJson(Map<String, dynamic> json) => Hardware(
@@ -80,7 +92,9 @@ class Hardware {
     name: json["name"],
     hardwareId: json["hardwareId"],
     brightness: json["brightness"] == null ? null : json["brightness"],
+    brightnessSchedule: json["brightnessSchedule"] == null ? null : json["brightnessSchedule"],
     lamp: json["lamp"] == null ? null : json["lamp"],
+    active: json["active"] == null ? null : json["active"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -88,6 +102,8 @@ class Hardware {
     "name": name,
     "hardwareId": hardwareId,
     "brightness": brightness == null ? null : brightness,
+    "brightnessSchedule": brightnessSchedule == null ? null : brightnessSchedule,
     "lamp": lamp == null ? null : lamp,
+    "active": active == null ? null : active,
   };
 }
