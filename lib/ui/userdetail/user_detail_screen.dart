@@ -226,7 +226,7 @@ class _DashboardContentState extends State<DashboardContent> {
                         children: [
                           Icon(Icons.lightbulb, color:  item[pos].hardware.active ? item[pos].hardware.lamp ? item[pos].hardware.brightnessSchedule == 0 ? Colors.red : Colors.green :  item[pos].hardware.brightness == 0 ? Colors.red : Colors.green : Colors.grey , ),
                           SizedBox(height: 5,),
-                          Text(item[pos].hardware.active ? item[pos].hardware.lamp ? item[pos].hardware.brightnessSchedule == 0 ? "Off" : "On" :  item[pos].hardware.brightness == 0 ? "Off" : "On" : "Offline", style: TextStyle(fontSize: 10), )
+                          Text(item[pos].hardware.active ? item[pos].hardware.lamp ?  item[pos].hardware.brightnessSchedule.toString() +"%" :  item[pos].hardware.brightness.toString() + "%" : "Offline", style: TextStyle(fontSize: 10) )
                         ],
                       ),
                     ),
@@ -317,6 +317,7 @@ class _DashboardContentState extends State<DashboardContent> {
       ),
     );
   }
+  
   Widget getUserLayout(List<Result> item, int pos, BuildContext context){
     return Container(
       child: Padding(

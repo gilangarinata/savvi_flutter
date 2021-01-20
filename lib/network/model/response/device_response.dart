@@ -92,7 +92,7 @@ class Hardware {
     name: json["name"],
     hardwareId: json["hardwareId"],
     brightness: json["brightness"] == null ? null : json["brightness"],
-    brightnessSchedule: json["brightnessSchedule"] == null ? null : json["brightnessSchedule"],
+    brightnessSchedule: json["brightnessSchedule"] == null ? 0 : json["brightnessSchedule"],
     lamp: json["lamp"] == null ? null : json["lamp"],
     active: json["active"] == null ? null : json["active"],
   );
@@ -102,7 +102,7 @@ class Hardware {
     "name": name,
     "hardwareId": hardwareId,
     "brightness": brightness == null ? null : brightness,
-    "brightnessSchedule": brightnessSchedule == null ? null : brightnessSchedule,
+    "brightnessSchedule": brightnessSchedule == null ? 0 : brightnessSchedule,
     "lamp": lamp == null ? null : lamp,
     "active": active == null ? null : active,
   };
