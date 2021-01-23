@@ -593,7 +593,7 @@ class _DashboardContentState extends State<DashboardContent> {
           ? floatingLoading()
           : ToggleSwitch(
         minWidth: 55.0,
-        initialLabelIndex: item.lamp ? 0 : 1,
+        initialLabelIndex: item.lamp != null ? item.lamp ? 1 : 0 : 1,
         activeBgColor: Colors.cyan,
         activeFgColor: Colors.white,
         inactiveBgColor: Colors.white54,

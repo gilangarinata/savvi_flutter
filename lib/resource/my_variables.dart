@@ -11,7 +11,8 @@ class MyVariables {
         updateLamp: "/devices/update_lamp",
         hardware: "/hardware",
         updateBrightness: "/devices/update_brightness",
-        schedule: "/schedule"
+        schedule: "/schedule",
+        getUserReferal: "/users/getUserReferal"
       };
       return prodFlavor;
     } else {
@@ -23,7 +24,8 @@ class MyVariables {
         updateLamp: "/devices/update_lamp",
         hardware: "/hardware",
         updateBrightness: "/devices/update_brightness",
-        schedule: "/schedule"
+        schedule: "/schedule",
+        getUserReferal: "/users/getUserReferal"
       };
       return devFlavor;
     }
@@ -37,5 +39,6 @@ class MyVariables {
   static const String schedule = "schedule";
   static const String updateLamp = "updateLamp";
   static const String updateBrightness = "updateBrigtness";
+  static const String getUserReferal = "getUserReferal";
 
 }

@@ -3,11 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/request/add_device_request.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/add_device.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/device_response.dart';
+import 'package:mylamp_flutter_v4_stable/network/model/response/user_add_device_response.dart';
 
 
 abstract class DashboardEvent extends Equatable {}
 
 abstract class DashboardState extends Equatable {}
+
+class FetchUsers extends DashboardEvent {
+  @override
+  List<Object> get props => null;
+  final String position;
+  final String referal;
+
+  FetchUsers(this.position,this.referal);
+}
 
 class DeleteDevice extends DashboardEvent {
   @override
@@ -80,6 +90,20 @@ class InitialState extends DashboardState {
 class LoadingState extends DashboardState {
   @override
   List<Object> get props => [];
+}
+
+class LoadingFetchUserState extends DashboardState {
+  @override
+  List<Object> get props => [];
+}
+
+class LoadedFetchUserState extends DashboardState {
+  final List<User> items;
+
+  LoadedFetchUserState(this.items);
+
+  @override
+  List<Object> get props => [items];
 }
 
 class ErrorState extends DashboardState {

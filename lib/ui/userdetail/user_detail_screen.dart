@@ -224,9 +224,9 @@ class _DashboardContentState extends State<DashboardContent> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Icon(Icons.lightbulb, color:  item[pos].hardware.active ? item[pos].hardware.lamp ? item[pos].hardware.brightnessSchedule == 0 ? Colors.red : Colors.green :  item[pos].hardware.brightness == 0 ? Colors.red : Colors.green : Colors.grey , ),
+                          Icon(Icons.lightbulb, color:  item[pos].hardware.active ? !item[pos].hardware.lamp ? item[pos].hardware.brightnessSchedule == 0 ? Colors.red : Colors.green :  item[pos].hardware.brightness == 0 ? Colors.red : Colors.green : Colors.grey , ),
                           SizedBox(height: 5,),
-                          Text(item[pos].hardware.active ? item[pos].hardware.lamp ?  item[pos].hardware.brightnessSchedule.toString() +"%" :  item[pos].hardware.brightness.toString() + "%" : "Offline", style: TextStyle(fontSize: 10) )
+                          Text(item[pos].hardware.active ? !item[pos].hardware.lamp ?  item[pos].hardware.brightnessSchedule.toString() +"%" :  item[pos].hardware.brightness.toString() + "%" : "Offline", style: TextStyle(fontSize: 10) )
                         ],
                       ),
                     ),
@@ -262,7 +262,7 @@ class _DashboardContentState extends State<DashboardContent> {
                         visible: isControlAllowed,
                         child: ToggleSwitch(
                           minWidth: 55.0,
-                          initialLabelIndex: item[pos].hardware.lamp != null ? item[pos].hardware.lamp ? 0 : 1 : 0,
+                          initialLabelIndex: item[pos].hardware.lamp != null ? item[pos].hardware.lamp ? 1 : 0 : 1,
                           activeBgColor: Colors.cyan,
                           activeFgColor: Colors.white,
                           inactiveBgColor: Colors.black26,
@@ -317,7 +317,7 @@ class _DashboardContentState extends State<DashboardContent> {
       ),
     );
   }
-  
+
   Widget getUserLayout(List<Result> item, int pos, BuildContext context){
     return Container(
       child: Padding(

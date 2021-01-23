@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/add_device.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/device_response.dart';
+import 'package:mylamp_flutter_v4_stable/network/model/response/user_add_device_response.dart';
 import 'package:mylamp_flutter_v4_stable/network/repository/auth_repository.dart';
 import 'package:mylamp_flutter_v4_stable/network/repository/dashboard_repository.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_strings.dart';
@@ -52,6 +53,14 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         }else{
           yield ErrorState(message: MyStrings.serverFailed);
         }
+      }catch (e) {
+        yield ErrorState(message: e.toString());
+      }
+    }else if(event is FetchUsers){
+      yield LoadingFetchUserState();
+      try {
+        List<User> users = await repository.fetchUsers(event.referal, event.position);
+        yield LoadedFetchUserState(users);
       }catch (e) {
         yield ErrorState(message: e.toString());
       }

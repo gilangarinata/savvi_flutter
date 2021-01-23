@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:mylamp_flutter_v4_stable/network/model/response/add_device.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/device_response.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/negative_response.dart';
+import 'package:mylamp_flutter_v4_stable/network/model/response/user_add_device_response.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_strings.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_variables.dart';
 import 'package:mylamp_flutter_v4_stable/utils/tools.dart';
@@ -14,6 +15,7 @@ abstract class DashboardRepository {
   Future<AddDeviceResponse> addDevice(Map<String, String> request, String token);
   Future<bool> updateLamp(Map<String, String> request, String token);
   Future<bool> deleteDevice(String deviceId, String token);
+  Future<List<User>> fetchUsers(String referal, String position);
 }
 
 class DashboardRepositoryImpl implements DashboardRepository {
@@ -85,6 +87,43 @@ class DashboardRepositoryImpl implements DashboardRepository {
         var data = json.decode(response.body);
         NegativeResponse results = NegativeResponse.fromJson(data);
         throw Exception(results.message);
+      }
+    }
+  }
+
+  @override
+  Future<List<User>> fetchUsers(String referal, String position) async {
+    var uri = Uri.http(FlavorConfig.instance.variables[MyVariables.baseUrl],
+        FlavorConfig.instance.variables[MyVariables.getUserReferal] + "/$referal/$position");
+    var response = await http.get(uri);
+
+    print(uri);
+
+    if (response.statusCode == 200) {
+      if (response.body != null) {
+        try {
+          var data = json.decode(response.body);
+          List<User> results = UserAddDeviceResponse.fromJson(data).users;
+          Tools.stackTracer(StackTrace.current, results.toString(), response.statusCode);
+          return results;
+        } catch (e) {
+          Tools.stackTracer(StackTrace.current, response.body, 500);
+          throw Exception(MyStrings.parseFailed);
+        }
+      } else {
+        Tools.stackTracer(StackTrace.current, "Error", 501);
+        throw Exception(MyStrings.noData);
+      }
+    } else {
+      Tools.stackTracer(StackTrace.current, response.body, response.statusCode);
+      if(response.body.contains("reason")){
+        throw Exception(MyStrings.serverFailed);
+      }else{
+        Tools.stackTracer(StackTrace.current, response.body, response.statusCode);
+        var data = json.decode(response.body);
+        NegativeResponse results = NegativeResponse.fromJson(data);
+        throw Exception(results.message);
+
       }
     }
   }
