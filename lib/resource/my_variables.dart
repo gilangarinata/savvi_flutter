@@ -12,7 +12,10 @@ class MyVariables {
         hardware: "/hardware",
         updateBrightness: "/devices/update_brightness",
         schedule: "/schedule",
-        getUserReferal: "/users/getUserReferal"
+        getUserReferal: "/users/getUserReferal",
+        getUserQuery: "/users/getGoverment",
+        getStreet : "/devices/streets",
+        getDeviceV3 : "/devices/v3"
       };
       return prodFlavor;
     } else {
@@ -25,7 +28,10 @@ class MyVariables {
         hardware: "/hardware",
         updateBrightness: "/devices/update_brightness",
         schedule: "/schedule",
-        getUserReferal: "/users/getUserReferal"
+        getUserReferal: "/users/getUserReferal",
+        getUserQuery: "/users/getGoverment",
+        getStreet : "/devices/streets",
+        getDeviceV3 : "/devices/v3"
       };
       return devFlavor;
     }
@@ -40,5 +46,8 @@ class MyVariables {
   static const String updateLamp = "updateLamp";
   static const String updateBrightness = "updateBrigtness";
   static const String getUserReferal = "getUserReferal";
+  static const String getUserQuery = "getUserQuery";
+  static const String getStreet = "getUserStreet";
+  static const String getDeviceV3 = "getDeviceV3";
 
 }

@@ -74,4 +74,9 @@ class User {
     "referalSU1": referalSu1,
     "__v": v,
   };
+
+  static List<User> fromJsonList(List list) {
+    if (list == null) return null;
+    return list.map((item) => User.fromJson(item)).toList();
+  }
 }

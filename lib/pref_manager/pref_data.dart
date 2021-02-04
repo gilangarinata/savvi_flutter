@@ -5,4 +5,5 @@ class PrefData {
   static const String POSITION = "position";
   static const String REFERRAL = "referral";
   static const String TOKEN = "token";
+  static const String REFERAL_FROM = "referal_from";
 }

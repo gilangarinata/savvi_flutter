@@ -84,7 +84,7 @@ class _DashboardContentState extends State<DashboardContent> {
     userId = prefs.getString(PrefData.USER_ID);
     token = prefs.getString(PrefData.TOKEN);
     bloc = BlocProvider.of<DashboardBloc>(context);
-    bloc.add(FetchDevice(userId, token));
+    bloc.add(FetchDevice(userId, "", token));
   }
 
   @override
@@ -94,7 +94,7 @@ class _DashboardContentState extends State<DashboardContent> {
   }
 
   Future<void> onRefreshData() async {
-    bloc.add(FetchDevice(userId, token));
+    bloc.add(FetchDevice(userId, "", token));
   }
 
   @override
@@ -152,14 +152,14 @@ class _DashboardContentState extends State<DashboardContent> {
               isLampLoading = new List(countDevice);
             });
           } else if (event is UpdateLampSuccess) {
-            bloc.add(FetchDevice(userId, token));
+            bloc.add(FetchDevice(userId, "", token));
           }
         },
         child: isLoading
             ? ProgressLoading()
             : isError
                 ? NegativeScenarioView(errorMessage,false, (){
-                  bloc.add(FetchDevice(userId, token));
+                  bloc.add(FetchDevice(userId, "", token));
                 })
                 : Container(
                     color: Colors.white,
@@ -222,11 +222,12 @@ class _DashboardContentState extends State<DashboardContent> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: item.length,
                             itemBuilder: (context, pos) {
-                              if(item[pos].position == position){
-                                return getLampLayout(item, pos, context);
-                              }else{
-                                return getUserLayout(item, pos, context);
-                              }
+                              return getLampLayout(item, pos, context);
+                              // if(item[pos].position == position){
+                              //
+                              // }else{
+                              //   return getUserLayout(item, pos, context);
+                              // }
                             },
                           ),
                         ],
@@ -241,9 +242,9 @@ class _DashboardContentState extends State<DashboardContent> {
           // if(isControlAllowed) {
             showDialog(
                 context: context,
-                builder: (_) => AddDeviceDialog(userId, token,username,position,referral)).then((value) {
+                builder: (_) => AddDeviceDialog(userId, token,username,position,referral,"")).then((value) {
               if (value) {
-                bloc.add(FetchDevice(userId, token));
+                bloc.add(FetchDevice(userId, "", token));
               }
             });
           // }else{
@@ -287,7 +288,7 @@ class _DashboardContentState extends State<DashboardContent> {
           onLongPress: (){
             showDialog(context: context,builder: (_) => CustomEventDialog(item[pos].id, token, item[pos].hardware.hardwareId)).then((value) {
               if (value) {
-                bloc.add(FetchDevice(userId, token));
+                bloc.add(FetchDevice(userId, "", token));
               }
             });
           },
@@ -404,68 +405,68 @@ class _DashboardContentState extends State<DashboardContent> {
       ),
     );
   }
-  Widget getUserLayout(List<Result> item, int pos, BuildContext context){
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: 10, vertical: 5),
-        child: InkWell(
-          onTap: (){
-            Tools.addScreen(context, UserDetailScreen(item[pos].user, item[pos].position, item[pos].username));
-          },
-          onLongPress: (){
-            // showDialog(context: context,builder: (_) => CustomEventDialog(item[pos].id, token, item[pos].hardware.hardwareId)).then((value) {
-            //   if (value) {
-            //     bloc.add(FetchDevice(userId, token));
-            //   }
-            // });
-          },
-          child: Ink(
-            color: Colors.red,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius:
-                  BorderRadius.circular(6)),
-              color: Colors.white,
-              elevation: 3,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: Container(
-                padding: EdgeInsets.all(15),
-                child: Row(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 60,
-                        child: Icon(Icons.person, color: Colors.black38,)),
-                    Container(width: 15),
-                    Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        children: <Widget>[
-                          MyText.myTextDescription(
-                              item[pos].username,
-                              MyColors.grey_80),
-                          Container(height: 5),
-                          MyText.myTextDescription(
-                              item[pos].position,
-                              MyColors.grey_40),
-                        ]),
-                    Spacer(),
-                    SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: Icon(Icons.arrow_forward_ios_sharp, color: Colors.black38,)
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget getUserLayout(List<Result> item, int pos, BuildContext context){
+  //   return Container(
+  //     child: Padding(
+  //       padding: const EdgeInsets.symmetric(
+  //           horizontal: 10, vertical: 5),
+  //       child: InkWell(
+  //         onTap: (){
+  //           Tools.addScreen(context, UserDetailScreen(item[pos].user, item[pos].position, item[pos].username));
+  //         },
+  //         onLongPress: (){
+  //           // showDialog(context: context,builder: (_) => CustomEventDialog(item[pos].id, token, item[pos].hardware.hardwareId)).then((value) {
+  //           //   if (value) {
+  //           //     bloc.add(FetchDevice(userId, token));
+  //           //   }
+  //           // });
+  //         },
+  //         child: Ink(
+  //           color: Colors.red,
+  //           child: Card(
+  //             shape: RoundedRectangleBorder(
+  //                 borderRadius:
+  //                 BorderRadius.circular(6)),
+  //             color: Colors.white,
+  //             elevation: 3,
+  //             clipBehavior: Clip.antiAliasWithSaveLayer,
+  //             child: Container(
+  //               padding: EdgeInsets.all(15),
+  //               child: Row(
+  //                 crossAxisAlignment:
+  //                 CrossAxisAlignment.center,
+  //                 children: <Widget>[
+  //                   Container(
+  //                     width: 60,
+  //                       child: Icon(Icons.person, color: Colors.black38,)),
+  //                   Container(width: 15),
+  //                   Column(
+  //                       crossAxisAlignment:
+  //                       CrossAxisAlignment.start,
+  //                       children: <Widget>[
+  //                         MyText.myTextDescription(
+  //                             item[pos].username,
+  //                             MyColors.grey_80),
+  //                         Container(height: 5),
+  //                         MyText.myTextDescription(
+  //                             item[pos].position,
+  //                             MyColors.grey_40),
+  //                       ]),
+  //                   Spacer(),
+  //                   SizedBox(
+  //                     width: 40,
+  //                     height: 40,
+  //                     child: Icon(Icons.arrow_forward_ios_sharp, color: Colors.black38,)
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }
 
 

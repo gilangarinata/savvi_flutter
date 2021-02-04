@@ -10,6 +10,7 @@ import 'package:mylamp_flutter_v4_stable/resource/my_field_style.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_strings.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_text.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/dashboard_screen.dart';
+import 'package:mylamp_flutter_v4_stable/ui/filter/filter_screen.dart';
 import 'package:mylamp_flutter_v4_stable/ui/signin/signin_bloc.dart';
 import 'package:mylamp_flutter_v4_stable/ui/signin/signin_contract.dart';
 import 'package:mylamp_flutter_v4_stable/utils/tools.dart';
@@ -80,12 +81,13 @@ class _SignInContentState extends State<SignInContent> {
               prefs.setString(PrefData.REFERRAL, state.items.userInfo.referal);
               prefs.setString(PrefData.POSITION, state.items.userInfo.position);
               prefs.setString(PrefData.USERNAME, state.items.userInfo.username);
+              prefs.setString(PrefData.REFERAL_FROM, state.items.userInfo.referalFrom);
               prefs.setString(PrefData.TOKEN, state.items.token);
 
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => DashboardScreen()
+                      builder: (context) => FilterScreen()
                   ),
                   ModalRoute.withName("/Home")
               );

@@ -36,6 +36,7 @@ class UserInfo {
     this.email,
     this.position,
     this.referal,
+    this.referalFrom
   });
 
   String id;
@@ -43,6 +44,7 @@ class UserInfo {
   String email;
   String position;
   String referal;
+  String referalFrom;
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => UserInfo(
         id: json["_id"],
@@ -50,6 +52,7 @@ class UserInfo {
         email: json["email"],
         position: json["position"],
         referal: json["referal"],
+        referalFrom: json["referalFrom"],
       );
 
   Map<String, dynamic> toJson() => {

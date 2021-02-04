@@ -15,6 +15,12 @@ import 'package:mylamp_flutter_v4_stable/widget/my_snackbar.dart';
 import 'package:mylamp_flutter_v4_stable/widget/progress_loading.dart';
 
 class SignUpScreen extends StatelessWidget {
+
+  final bool isSU2;
+  final String referal;
+
+  SignUpScreen(this.isSU2,this.referal);
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -23,12 +29,18 @@ class SignUpScreen extends StatelessWidget {
           create: (context) => SignUpBloc(AuthRepositoryImpl()),
         )
       ],
-      child: SignUpContent(),
+      child: SignUpContent(isSU2,referal),
     );
   }
 }
 
 class SignUpContent extends StatefulWidget {
+
+  final bool isSU2;
+  final String referal;
+
+  SignUpContent(this.isSU2, this.referal);
+
   @override
   _SignUpContentState createState() => _SignUpContentState();
 }
@@ -39,6 +51,7 @@ class _SignUpContentState extends State<SignUpContent> {
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _referralController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
+  TextEditingController _nameController = new TextEditingController();
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
 
@@ -72,7 +85,8 @@ class _SignUpContentState extends State<SignUpContent> {
               setState(() {
                 _isLoading = false;
               });
-              MySnackbar.successSnackbar(context, MyStrings.signUpSuccess);
+              Navigator.pop(context);
+              MySnackbar.showToast(MyStrings.signUpSuccess);
             }
           },
           child: Container(
@@ -100,10 +114,10 @@ class _SignUpContentState extends State<SignUpContent> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Image.asset('assets/logo.png',width: 170,),
+                          Image.asset('assets/logo.png',width: 100,),
                           SizedBox(height: 10,),
-                          MyText.myTextHeader1(
-                              MyStrings.signUpPage, MyColors.grey_80),
+                          MyText.myTextHeader2(
+                               widget.isSU2 ? "Tambah Instansi" : "Tambah Admin", MyColors.grey_80),
                           TextFormField(
                             controller: _usernameController,
                             style: MyFieldStyle.myFieldStylePrimary(),
@@ -125,6 +139,29 @@ class _SignUpContentState extends State<SignUpContent> {
                               enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
                               focusedBorder:
                                   MyFieldStyle.myUnderlineFocusFieldStyle(),
+                            ),
+                          ),
+                          TextFormField(
+                            controller: _nameController,
+                            style: MyFieldStyle.myFieldStylePrimary(),
+                            keyboardType: TextInputType.text,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return MyStrings.mustNotBeEmpty;
+                              }
+                              return null;
+                            },
+                            cursorColor: MyColors.primary,
+                            decoration: InputDecoration(
+                              icon: Container(
+                                  child:
+                                  Icon(Icons.person, color: MyColors.grey_60),
+                                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
+                              labelText: "Nama",
+                              labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
+                              enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
+                              focusedBorder:
+                              MyFieldStyle.myUnderlineFocusFieldStyle(),
                             ),
                           ),
                           TextFormField(
@@ -154,29 +191,29 @@ class _SignUpContentState extends State<SignUpContent> {
                                   MyFieldStyle.myUnderlineFocusFieldStyle(),
                             ),
                           ),
-                          TextFormField(
-                            controller: _referralController,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return MyStrings.mustNotBeEmpty;
-                              }
-                              return null;
-                            },
-                            style: MyFieldStyle.myFieldStylePrimary(),
-                            keyboardType: TextInputType.text,
-                            cursorColor: MyColors.primary,
-                            decoration: InputDecoration(
-                              icon: Container(
-                                  child: Icon(Icons.person_add,
-                                      color: MyColors.grey_60),
-                                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
-                              labelText: MyStrings.referral,
-                              labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
-                              enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
-                              focusedBorder:
-                                  MyFieldStyle.myUnderlineFocusFieldStyle(),
-                            ),
-                          ),
+                          // TextFormField(
+                          //   controller: _referralController,
+                          //   validator: (value) {
+                          //     if (value.isEmpty) {
+                          //       return MyStrings.mustNotBeEmpty;
+                          //     }
+                          //     return null;
+                          //   },
+                          //   style: MyFieldStyle.myFieldStylePrimary(),
+                          //   keyboardType: TextInputType.text,
+                          //   cursorColor: MyColors.primary,
+                          //   decoration: InputDecoration(
+                          //     icon: Container(
+                          //         child: Icon(Icons.person_add,
+                          //             color: MyColors.grey_60),
+                          //         margin: EdgeInsets.fromLTRB(0, 15, 0, 0)),
+                          //     labelText: MyStrings.referral,
+                          //     labelStyle: MyFieldStyle.myFieldLabelStylePrimary(),
+                          //     enabledBorder: MyFieldStyle.myUnderlineFieldStyle(),
+                          //     focusedBorder:
+                          //         MyFieldStyle.myUnderlineFocusFieldStyle(),
+                          //   ),
+                          // ),
                           TextFormField(
                             controller: _passwordController,
                             style: MyFieldStyle.myFieldStylePrimary(),
@@ -218,15 +255,16 @@ class _SignUpContentState extends State<SignUpContent> {
                                   child: Container(
                                     width: double.infinity,
                                     child: MyButton.myPrimaryButton(
-                                      MyStrings.createAccount,
+                                      widget.isSU2 ? "Tambah instansi baru" : "Tambah admin baru",
                                       () {
                                         if (_formKey.currentState.validate()) {
                                           SignUpRequest request =
                                               new SignUpRequest(
                                                   _usernameController.text.trim(),
                                                   _passwordController.text.trim(),
-                                                  _referralController.text.trim(),
-                                                  _emailController.text.trim());
+                                                  widget.referal.trim(),
+                                                  _emailController.text.trim(),
+                                                  _nameController.text.trim());
                                           _bloc.add(
                                               FetchSignUp(request.reqBody()));
                                         }

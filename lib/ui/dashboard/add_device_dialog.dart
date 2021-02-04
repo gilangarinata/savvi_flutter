@@ -18,8 +18,9 @@ class AddDeviceDialog extends StatefulWidget {
   String username;
   String position;
   String referal;
+  String ruasJalan;
 
-  AddDeviceDialog(this.userId, this.token, this.username,this.position,this.referal);
+  AddDeviceDialog(this.userId, this.token, this.username,this.position,this.referal,this.ruasJalan);
 
   @override
   _AddDeviceDialogState createState() => _AddDeviceDialogState();
@@ -34,7 +35,7 @@ class _AddDeviceDialogState extends State<AddDeviceDialog> {
           create: (context) => DashboardBloc(DashboardRepositoryImpl()),
         )
       ],
-      child: DialogContent(widget.userId, widget.token,widget.username,widget.position,widget.referal),
+      child: DialogContent(widget.userId, widget.token,widget.username,widget.position,widget.referal,widget.ruasJalan),
     );
   }
 }
@@ -45,10 +46,11 @@ class DialogContent extends StatefulWidget {
   String username;
   String position;
   String referal;
+  String ruasJalan;
 
 
   DialogContent(this.userId, this.token, this.username, this.position,
-      this.referal);
+      this.referal, this.ruasJalan);
 
   @override
   _DialogContentState createState() => _DialogContentState();
@@ -65,6 +67,7 @@ class _DialogContentState extends State<DialogContent> {
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _descriptionController = new TextEditingController();
   TextEditingController _hardwareIdController = new TextEditingController();
+  TextEditingController _ruasJalanController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   String userId;
@@ -87,10 +90,8 @@ class _DialogContentState extends State<DialogContent> {
     bloc = BlocProvider.of<DashboardBloc>(context);
 
     setState(() {
-      User firstUser = User(username: widget.username, referal: widget.referal, position: widget.position);
-      userModel.add(firstUser);
-      _currentUser = firstUser;
       userId = widget.userId;
+      _ruasJalanController.text = widget.ruasJalan;
     });
 
 
@@ -167,7 +168,7 @@ class _DialogContentState extends State<DialogContent> {
           child: Column(
             children: <Widget>[
               Material(
-                color: MyColors.brownDark,
+                color: MyColors.primary,
                 child: Container(
                   height: 50,
                   child: Row(
@@ -196,15 +197,21 @@ class _DialogContentState extends State<DialogContent> {
                                     style: TextStyle(color: Colors.white)),
                               ),
                               onTap: () {
+                                if(_currentUser == null) {
+                                  MySnackbar.showToast("Tidak ada user yang dipilih.");
+                                  return;
+                                }
+
+
                                 if (_formKey.currentState.validate()) {
                                   var name = _nameController.text.trim();
-                                  var description =
-                                      _descriptionController.text.trim();
+                                  var description = "null";
+                                  var ruasJalan = _ruasJalanController.text.trim();
                                   var hardwareId =
                                       _hardwareIdController.text.trim();
                                   AddDeviceRequest request =
                                       new AddDeviceRequest(name, description,
-                                          hardwareId, userId);
+                                          hardwareId, userId,ruasJalan);
                                   bloc.add(AddDevice(
                                       request.reqBody(), widget.token));
                                 }
@@ -253,27 +260,6 @@ class _DialogContentState extends State<DialogContent> {
                     ),
                     Container(height: 25),
                     TextFormField(
-                      controller: _descriptionController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return MyStrings.mustNotBeEmpty;
-                        }
-                        return null;
-                      },
-                      style: TextStyle(fontSize: 18),
-                      decoration: InputDecoration(
-                        hintText: MyStrings.desc,
-                        hintStyle: TextStyle(color: Colors.grey),
-                        enabledBorder: UnderlineInputBorder(
-                            borderSide:
-                                BorderSide(color: MyColors.grey_40, width: 1)),
-                        focusedBorder: UnderlineInputBorder(
-                            borderSide:
-                                BorderSide(color: MyColors.grey_60, width: 1)),
-                      ),
-                    ),
-                    Container(height: 25),
-                    TextFormField(
                       controller: _hardwareIdController,
                       validator: (value) {
                         if (value.isEmpty) {
@@ -291,6 +277,27 @@ class _DialogContentState extends State<DialogContent> {
                         focusedBorder: UnderlineInputBorder(
                             borderSide:
                                 BorderSide(color: MyColors.grey_60, width: 1)),
+                      ),
+                    ),
+                    Container(height: 25),
+                    TextFormField(
+                      controller: _ruasJalanController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return MyStrings.mustNotBeEmpty;
+                        }
+                        return null;
+                      },
+                      style: TextStyle(fontSize: 18),
+                      decoration: InputDecoration(
+                        hintText: MyStrings.ruasJalan,
+                        hintStyle: TextStyle(color: Colors.grey),
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide:
+                            BorderSide(color: MyColors.grey_40, width: 1)),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide:
+                            BorderSide(color: MyColors.grey_60, width: 1)),
                       ),
                     ),
                     SizedBox(height: 20,),

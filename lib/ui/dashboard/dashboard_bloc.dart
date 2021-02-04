@@ -20,7 +20,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     if (event is FetchDevice) {
       yield LoadingState();
       try {
-        List<Result> items = await repository.fetchDevice(event.userId,event.token);
+        List<Result> items = await repository.fetchDevice(event.userId,event.ruasJalan,event.token);
         yield LoadedState(items: items);
       } catch (e) {
         yield ErrorState(message: e.toString());

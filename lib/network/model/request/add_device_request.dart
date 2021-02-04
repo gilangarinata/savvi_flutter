@@ -3,6 +3,7 @@ class AddDeviceRequest {
   String description;
   String hardwareId;
   String userId;
+  String ruasJalan;
 
   Map<String, String> reqBody() {
     Map<String, String> qParams = {
@@ -10,9 +11,10 @@ class AddDeviceRequest {
       'description': description,
       'hardwareId': hardwareId,
       'userId': userId,
+      'ruasJalan' : ruasJalan
     };
     return qParams;
   }
 
-  AddDeviceRequest(this.name, this.description, this.hardwareId, this.userId);
+  AddDeviceRequest(this.name, this.description, this.hardwareId, this.userId, this.ruasJalan);
 }

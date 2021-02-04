@@ -45,15 +45,15 @@ class IntroductionScreen extends StatelessWidget {
                     SizedBox(
                       height: 20,
                     ),
-                    Container(
-                      width: double.infinity,
-                      child: MyButton.myPrimaryButton(
-                        MyStrings.createAccount,
-                        () {
-                          Tools.addScreen(context, SignUpScreen());
-                        },
-                      ),
-                    ),
+                    // Container(
+                    //   width: double.infinity,
+                    //   child: MyButton.myPrimaryButton(
+                    //     MyStrings.createAccount,
+                    //     () {
+                    //       Tools.addScreen(context, SignUpScreen());
+                    //     },
+                    //   ),
+                    // ),
                     SizedBox(
                       height: 10,
                     ),

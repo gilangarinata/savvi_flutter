@@ -30,8 +30,9 @@ class UserDetailScreen extends StatefulWidget {
   String userId;
   String position;
   String username;
+  String ruasJalan;
 
-  UserDetailScreen(this.userId,this.position, this.username);
+  UserDetailScreen(this.userId,this.position, this.username,this.ruasJalan);
 
   @override
   _UserDetailScreenState createState() => _UserDetailScreenState();
@@ -46,7 +47,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
           create: (context) => DashboardBloc(DashboardRepositoryImpl()),
         )
       ],
-      child: DashboardContent(widget.userId, widget.position, widget.username),
+      child: DashboardContent(widget.userId, widget.position, widget.username,widget.ruasJalan),
     );
   }
 }
@@ -55,9 +56,10 @@ class DashboardContent extends StatefulWidget {
   String userId;
   String position;
   String username;
+  String ruasJalan;
 
 
-  DashboardContent(this.userId, this.position, this.username);
+  DashboardContent(this.userId, this.position, this.username,this.ruasJalan);
 
   @override
   _DashboardContentState createState() => _DashboardContentState(username,position,userId);
@@ -88,7 +90,7 @@ class _DashboardContentState extends State<DashboardContent> {
     isControlAllowed = true;
     token = prefs.getString(PrefData.TOKEN);
     bloc = BlocProvider.of<DashboardBloc>(context);
-    bloc.add(FetchDevice(userId, token));
+    bloc.add(FetchDevice(userId, token, widget.ruasJalan));
   }
 
   @override
@@ -98,7 +100,7 @@ class _DashboardContentState extends State<DashboardContent> {
   }
 
   Future<void> onRefreshData() async {
-    bloc.add(FetchDevice(userId, token));
+    bloc.add(FetchDevice(userId, token, widget.ruasJalan));
   }
 
   @override
@@ -114,9 +116,9 @@ class _DashboardContentState extends State<DashboardContent> {
             children: [
               Icon(Icons.person, color: MyColors.grey_40,),
               SizedBox(width: 10,),
-              MyText.myTextHeader1(username, MyColors.grey_40),
+              MyText.myTextDescription(username, MyColors.grey_40),
               Spacer(),
-              MyText.myTextDescription(position, MyColors.grey_40)
+              MyText.myTextDescription(widget.ruasJalan, MyColors.grey_40)
             ],
           ),
           ),
@@ -151,14 +153,14 @@ class _DashboardContentState extends State<DashboardContent> {
               isLampLoading = new List(countDevice);
             });
           } else if (event is UpdateLampSuccess) {
-            bloc.add(FetchDevice(userId, token));
+            bloc.add(FetchDevice(userId, token, widget.ruasJalan));
           }
         },
         child: isLoading
             ? ProgressLoading()
             : isError
                 ? NegativeScenarioView(errorMessage,false, (){
-                  bloc.add(FetchDevice(userId, token));
+                  bloc.add(FetchDevice(userId, token, widget.ruasJalan));
                 })
                 : Container(
                     color: Colors.white,
@@ -173,11 +175,12 @@ class _DashboardContentState extends State<DashboardContent> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: item.length,
                             itemBuilder: (context, pos) {
-                              if(item[pos].position == position){
-                                return getLampLayout(item, pos, context);
-                              }else{
-                                return getUserLayout(item, pos, context);
-                              }
+                              return getLampLayout(item, pos, context);
+                              // if(item[pos].position == position){
+                              //
+                              // }else{
+                              //   return getUserLayout(item, pos, context);
+                              // }
                             },
                           ),
                         ],
@@ -200,7 +203,7 @@ class _DashboardContentState extends State<DashboardContent> {
           onLongPress: (){
             showDialog(context: context,builder: (_) => CustomEventDialog(item[pos].id, token, item[pos].hardware.hardwareId)).then((value) {
               if (value) {
-                bloc.add(FetchDevice(userId, token));
+                bloc.add(FetchDevice(userId, token, widget.ruasJalan));
               }
             });
           },
@@ -318,68 +321,68 @@ class _DashboardContentState extends State<DashboardContent> {
     );
   }
 
-  Widget getUserLayout(List<Result> item, int pos, BuildContext context){
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: 10, vertical: 5),
-        child: InkWell(
-          onTap: (){
-            Tools.addScreen(context, UserDetailScreen(item[pos].user, item[pos].position, item[pos].username));
-          },
-          onLongPress: (){
-            // showDialog(context: context,builder: (_) => CustomEventDialog(item[pos].id, token, item[pos].hardware.hardwareId)).then((value) {
-            //   if (value) {
-            //     bloc.add(FetchDevice(userId, token));
-            //   }
-            // });
-          },
-          child: Ink(
-            color: Colors.red,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius:
-                  BorderRadius.circular(6)),
-              color: Colors.white,
-              elevation: 3,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: Container(
-                padding: EdgeInsets.all(15),
-                child: Row(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 60,
-                        child: Icon(Icons.person, color: Colors.black38,)),
-                    Container(width: 15),
-                    Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        children: <Widget>[
-                          MyText.myTextDescription(
-                              item[pos].username,
-                              MyColors.grey_80),
-                          Container(height: 5),
-                          MyText.myTextDescription(
-                              item[pos].position,
-                              MyColors.grey_40),
-                        ]),
-                    Spacer(),
-                    SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: Icon(Icons.arrow_forward_ios_sharp, color: Colors.black38,)
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget getUserLayout(List<Result> item, int pos, BuildContext context){
+  //   return Container(
+  //     child: Padding(
+  //       padding: const EdgeInsets.symmetric(
+  //           horizontal: 10, vertical: 5),
+  //       child: InkWell(
+  //         onTap: (){
+  //           Tools.addScreen(context, UserDetailScreen(item[pos].user, item[pos].position, item[pos].username));
+  //         },
+  //         onLongPress: (){
+  //           // showDialog(context: context,builder: (_) => CustomEventDialog(item[pos].id, token, item[pos].hardware.hardwareId)).then((value) {
+  //           //   if (value) {
+  //           //     bloc.add(FetchDevice(userId, token));
+  //           //   }
+  //           // });
+  //         },
+  //         child: Ink(
+  //           color: Colors.red,
+  //           child: Card(
+  //             shape: RoundedRectangleBorder(
+  //                 borderRadius:
+  //                 BorderRadius.circular(6)),
+  //             color: Colors.white,
+  //             elevation: 3,
+  //             clipBehavior: Clip.antiAliasWithSaveLayer,
+  //             child: Container(
+  //               padding: EdgeInsets.all(15),
+  //               child: Row(
+  //                 crossAxisAlignment:
+  //                 CrossAxisAlignment.center,
+  //                 children: <Widget>[
+  //                   Container(
+  //                     width: 60,
+  //                       child: Icon(Icons.person, color: Colors.black38,)),
+  //                   Container(width: 15),
+  //                   Column(
+  //                       crossAxisAlignment:
+  //                       CrossAxisAlignment.start,
+  //                       children: <Widget>[
+  //                         MyText.myTextDescription(
+  //                             item[pos].username,
+  //                             MyColors.grey_80),
+  //                         Container(height: 5),
+  //                         MyText.myTextDescription(
+  //                             item[pos].position,
+  //                             MyColors.grey_40),
+  //                       ]),
+  //                   Spacer(),
+  //                   SizedBox(
+  //                     width: 40,
+  //                     height: 40,
+  //                     child: Icon(Icons.arrow_forward_ios_sharp, color: Colors.black38,)
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }
 
 

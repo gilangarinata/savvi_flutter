@@ -11,7 +11,7 @@ import 'package:mylamp_flutter_v4_stable/resource/my_variables.dart';
 import 'package:mylamp_flutter_v4_stable/utils/tools.dart';
 
 abstract class DashboardRepository {
-  Future<List<Result>> fetchDevice(String userId,String token);
+  Future<List<Result>> fetchDevice(String userId,String ruasJalan, String token);
   Future<AddDeviceResponse> addDevice(Map<String, String> request, String token);
   Future<bool> updateLamp(Map<String, String> request, String token);
   Future<bool> deleteDevice(String deviceId, String token);
@@ -20,11 +20,21 @@ abstract class DashboardRepository {
 
 class DashboardRepositoryImpl implements DashboardRepository {
   @override
-  Future<List<Result>> fetchDevice(String userId, String token) async {
+  Future<List<Result>> fetchDevice(String userId, String ruasJalan, String token) async {
+    // var uri = Uri.http(FlavorConfig.instance.variables[MyVariables.baseUrl],
+    //     FlavorConfig.instance.variables[MyVariables.device] + "/$userId");
     var uri = Uri.http(FlavorConfig.instance.variables[MyVariables.baseUrl],
-        FlavorConfig.instance.variables[MyVariables.device] + "/$userId");
+        FlavorConfig.instance.variables[MyVariables.getDeviceV3] );
     Map<String,String> userHeader = {"Authorization" : "Bearer $token"};
-    var response = await http.get(uri, headers: userHeader);
+
+    Map<String, String> request = {
+      "userId" : userId ,
+      "ruasJalan" : ruasJalan
+    };
+
+    print(request);
+    var response = await http.post(uri, body: request);
+    // var response = await http.get(uri, headers: userHeader);
 
     if (response.statusCode == 200) {
       if (response.body != null) {
@@ -94,7 +104,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
   @override
   Future<List<User>> fetchUsers(String referal, String position) async {
     var uri = Uri.http(FlavorConfig.instance.variables[MyVariables.baseUrl],
-        FlavorConfig.instance.variables[MyVariables.getUserReferal] + "/$referal/$position");
+        FlavorConfig.instance.variables[MyVariables.getUserReferal] + "/$referal");
     var response = await http.get(uri);
 
     print(uri);

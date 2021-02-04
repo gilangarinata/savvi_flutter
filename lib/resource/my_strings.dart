@@ -1,59 +1,59 @@
 class MyStrings {
-  static const String introHeader = "Instantly Control Your Device Here.";
+  static const String introHeader = "Kontrol dengan mudah lampu jalan.";
   static const String introDescription =
-      "Monitor and get access to your device in just a simple click. Never loose your moment";
-  static const String createAccount = "Create New Account";
-  static const String loginWithId = "Login With User Id";
+      "Pantau dan dapatkan akses ke perangkat Anda hanya dengan sekali klik. Jangan pernah kehilangan momen Anda";
+  static const String createAccount = "Tambah User Baru";
+  static const String loginWithId = "Login";
   static const String privacyPolicy = "Privacy Policy";
   static const String terms = "Terms and Conditions";
 
-  static const String signUpPage = "Sign Up";
-  static const String signUpSuccess = "Sign Up Success.";
-  static const String signInPage = "Sign In";
+  static const String signUpPage = "Tambah User";
+  static const String signUpSuccess = "Tambah User Berhasil";
+  static const String signInPage = "Login";
 
-  static const String signIn = "Sign In";
-  static const String map = "Maps";
+  static const String signIn = "Login";
+  static const String map = "Map";
 
   static const String username = "Username";
   static const String email = "Email";
   static const String referral = "Referral";
   static const String password = "Password";
 
-  static const String addDevice = "Add Device";
-  static const String brightness = "Brightness";
+  static const String addDevice = "Tambah Device";
+  static const String brightness = "Kecerahan";
 
-  static const String serverFailed = "Failed to load data from server. Error : ";
+  static const String serverFailed = "Gagal mengambil data dari server. Error : ";
 
-  static const String hardwareUsed = "Hardware ID Already used.";
+  static const String hardwareUsed = "Hardware ID sudah digunakan";
 
-  static const String noInternet = "No Internet Connection!";
-  static const String wrongUser = "Wrong user ID";
-  static const String noData = "No Data From Server";
-  static const String parseFailed = "Failed to parse JSON data";
+  static const String noInternet = "Tidak ada koneksi internet";
+  static const String wrongUser = "User ID anda salah";
+  static const String noData = "Tidak ada data dari server";
+  static const String parseFailed = "Gagal parse data JSON";
 
-  static const String mustNotBeEmpty = "Must Not Be Empty";
-  static const String validEmail = "Enter a valid email.";
-  static const String passwordValidation = "Enter more than 5 characters.";
+  static const String mustNotBeEmpty = "Tidak boleh kosong";
+  static const String validEmail = "Masukkan email yang benar";
+  static const String passwordValidation = "Harus lebih dari 5 karakter";
 
-  static const String deviceName = "Device Name";
+  static const String deviceName = "Nama Device";
   static const String desc = "Description";
   static const String hid = "Hardware ID";
 
-  static const String schedule = "Schedule";
-  static const String history = "History";
+  static const String schedule = "Jadwal";
+  static const String history = "Riwayat";
 
 
-  static const String save = "SAVE";
-  static const String save2 = "Save";
+  static const String save = "SIMPAN";
+  static const String save2 = "Simpan";
 
-  static const String deleteDevice = "Delete device?";
-  static const String delete = "Delete";
-  static const String cancel = "Cancel";
+  static const String deleteDevice = "Apakah anda yakin ingin menghapus?";
+  static const String delete = "Hapus";
+  static const String cancel = "Batal";
 
-  static const String selectDevice = "Setup your device!";
-  static const String next = "Next";
-  static const String availableDevice = "Available Device";
-  static const String scanning = "Scanning..";
+  static const String selectDevice = "Atur device anda!";
+  static const String next = "Selanjutnya";
+  static const String availableDevice = "Device yang tersedia";
+  static const String scanning = "Mencari device..";
 
   static const String notification = "Notification";
   static const String chargingTime = "Charging";
@@ -64,24 +64,28 @@ class MyStrings {
   static const String longitude = "Longitude";
   static const String latitude = "Latitude";
 
-  static const String chargeCapacity = "Charge Capacity";
-  static const String dischargeCapacity = "Discharge Capacity";
-  static const String batteryCapacity = "Battery Capacity";
-  static const String batteryLife = "Battery Health";
+  static const String chargeCapacity = "Kapasitas Charge";
+  static const String dischargeCapacity = "Kapasitas Discharge";
+  static const String batteryCapacity = "Kapasitas Baterai";
+  static const String batteryLife = "Kesehatan Baterai";
 
-  static const String temperature = "Temperature";
-  static const String humidity = "Humidity";
+  static const String temperature = "Suhu";
+  static const String humidity = "Kelembaban";
 
-  static const String gallery = "Gallery";
-  static const String camera = "Camera";
+  static const String gallery = "Galeri";
+  static const String camera = "Kamera";
 
-  static const String pleaseWait = "Please Wait..";
+  static const String pleaseWait = "Mohon tunggu..";
 
-  static const String deviceImage = "Device Image";
-  static const String deleteImage = "Delete this image?";
+  static const String deviceImage = "Foto Device";
+  static const String deleteImage = "Hapus foto ini?";
 
-  static const String cannotReachServer = "Unable to reach server";
+  static const String cannotReachServer = "Gagal mengambil data dari server.";
 
-  static const String superuserPrivilege = "Only superuser 1 who can use this feature.";
-
+  static const String superuserPrivilege = "Hanya superuser 1 yang bisa menggunakan fitur ini";
+  static const String instansi = "Instansi";
+  static const String noInstansiItemSelected = "Tidak ada instansi yang dipilih";
+  static const String ruasJalan = "Ruas Jalan";
+  static const String noRuasSelected = "Tidak ada jalan yang dipilih";
+  static const String tampilkan = "Tampilkan";
 }

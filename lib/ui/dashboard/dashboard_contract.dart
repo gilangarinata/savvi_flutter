@@ -42,8 +42,9 @@ class FetchDevice extends DashboardEvent {
   List<Object> get props => null;
   final String userId;
   final String token;
+  final String ruasJalan;
 
-  FetchDevice(this.userId,this.token);
+  FetchDevice(this.userId,this.token,this.ruasJalan);
 }
 
 class AddDevice extends DashboardEvent {

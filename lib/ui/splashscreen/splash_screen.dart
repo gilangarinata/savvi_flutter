@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mylamp_flutter_v4_stable/pref_manager/pref_data.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/dashboard_screen.dart';
+import 'package:mylamp_flutter_v4_stable/ui/filter/filter_screen.dart';
 import 'package:mylamp_flutter_v4_stable/ui/introduction/introduction.dart';
 import 'package:mylamp_flutter_v4_stable/utils/tools.dart';
 import 'package:mylamp_flutter_v4_stable/widget/progress_loading.dart';
@@ -18,7 +19,7 @@ class SplashScreen extends StatelessWidget {
       bool isLoggedIn = await prefs.containsKey(PrefData.USER_ID);
       print(isLoggedIn.toString());
       if (isLoggedIn) {
-          Tools.changeScreen(context, DashboardScreen());
+          Tools.changeScreen(context, FilterScreen());
           // Tools.finish(context);
         } else {
           Tools.changeScreen(context, IntroductionScreen());
