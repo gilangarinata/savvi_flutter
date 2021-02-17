@@ -30,14 +30,14 @@ class SignInResponse {
 }
 
 class UserInfo {
-  UserInfo({
-    this.id,
-    this.username,
-    this.email,
-    this.position,
-    this.referal,
-    this.referalFrom
-  });
+  UserInfo(
+      {this.id,
+      this.username,
+      this.email,
+      this.position,
+      this.referal,
+      this.referalFrom,
+      this.referalFrom2});
 
   String id;
   String username;
@@ -45,6 +45,7 @@ class UserInfo {
   String position;
   String referal;
   String referalFrom;
+  List<dynamic> referalFrom2;
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => UserInfo(
         id: json["_id"],
@@ -53,6 +54,7 @@ class UserInfo {
         position: json["position"],
         referal: json["referal"],
         referalFrom: json["referalFrom"],
+        referalFrom2: json["referalFrom2"],
       );
 
   Map<String, dynamic> toJson() => {

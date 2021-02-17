@@ -28,6 +28,8 @@ import 'package:mylamp_flutter_v4_stable/ui/dashboard/dashboard_bloc.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/dashboard_contract.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/delete_dialog.dart';
 import 'package:mylamp_flutter_v4_stable/ui/detail/hardware_detail_screen.dart';
+import 'package:mylamp_flutter_v4_stable/ui/filter/add_admin_company.dart';
+import 'package:mylamp_flutter_v4_stable/ui/filter/profile_dialog.dart';
 import 'package:mylamp_flutter_v4_stable/ui/filter/street_model.dart';
 import 'package:mylamp_flutter_v4_stable/ui/filter/user_model.dart';
 import 'package:mylamp_flutter_v4_stable/ui/introduction/introduction.dart';
@@ -83,8 +85,10 @@ class _DashboardContentState extends State<DashboardContent> {
   bool isControlAllowed = false;
   String KEY_SU_1 = "superuser1";
   UserModelNew companySelected;
+  StreetModel streetModelSelected;
   String ruasJalanSelected = "";
   String referalFrom;
+  List<String> referalFrom2;
 
   void getPrefData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -93,8 +97,8 @@ class _DashboardContentState extends State<DashboardContent> {
       position = prefs.getString(PrefData.POSITION);
       referral = prefs.getString(PrefData.REFERRAL);
       referalFrom = prefs.getString(PrefData.REFERAL_FROM);
+      referalFrom2 = prefs.getStringList(PrefData.REFERAL_FROM_2);
     });
-
 
     isControlAllowed = position == KEY_SU_1 ? true : false;
 
@@ -196,14 +200,8 @@ class _DashboardContentState extends State<DashboardContent> {
                         ),
                       ),
                       onTap: () async {
-                        SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                        prefs.clear();
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext ctx) =>
-                                    IntroductionScreen()));
+                        showDialog(
+                            context: context, builder: (_) => ProfileDialog());
                       },
                     ),
                     SizedBox(
@@ -234,16 +232,18 @@ class _DashboardContentState extends State<DashboardContent> {
                       DropdownSearch<UserModelNew>(
                         searchBoxController: textCompanyController,
                         mode: Mode.BOTTOM_SHEET,
-                        showClearButton: true,
                         isFilteredOnline: true,
                         showSearchBox: true,
                         label: 'Instansi',
                         onFind: (String filter) => getDataCompany(filter),
                         onChanged: (UserModelNew data) {
-                          print(data.referal + "  reper");
-                          if(!isControlAllowed) {
-                            if(position == "user"){
-                              if(data.referal != referalFrom){
+                          setState(() {
+                            ruasJalanSelected = "";
+                          });
+
+                          if (!isControlAllowed) {
+                            if (position == "user") {
+                              if (!referalFrom2.contains(data.referal)) {
                                 setState(() {
                                   Tools.showToast(
                                       "Kamu tidak bisa memilih instansi ini");
@@ -265,6 +265,15 @@ class _DashboardContentState extends State<DashboardContent> {
                             companySelected = data;
                           });
                         },
+                        popupItemDisabled: (data) {
+                          return !isControlAllowed
+                              ? position == "user"
+                                  ? !referalFrom2.contains(data.referal)
+                                      ? true
+                                      : false
+                                  : data?.username != username
+                              : false;
+                        },
                         dropdownBuilder: _dropDownCompany,
                         popupItemBuilder: _customPopupCompanyBuilderExample,
                       ),
@@ -274,15 +283,34 @@ class _DashboardContentState extends State<DashboardContent> {
                       DropdownSearch<StreetModel>(
                         searchBoxController: TextEditingController(text: ''),
                         mode: Mode.BOTTOM_SHEET,
-                        showClearButton: true,
                         isFilteredOnline: true,
                         showSearchBox: true,
                         label: MyStrings.ruasJalan,
                         onFind: (String filter) => getDataStreet(filter),
                         onChanged: (StreetModel data) {
+                          if (companySelected != null) {
+                            if (!data.referalFrom2
+                                .contains(companySelected.referal)) {
+                              return;
+                            }
+                          }
+
                           setState(() {
                             ruasJalanSelected = data.ruasJalan;
+                            streetModelSelected = data;
                           });
+                        },
+                        popupItemDisabled: (data) {
+                          if (companySelected != null) {
+                            if (data.referalRuasFrom !=
+                                companySelected.referal) {
+                              return true;
+                            } else {
+                              return false;
+                            }
+                          } else {
+                            return true;
+                          }
                         },
                         dropdownBuilder: _dropDownStreet,
                         popupItemBuilder: _customPopupStreetBuilderExample,
@@ -349,11 +377,18 @@ class _DashboardContentState extends State<DashboardContent> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Icon(Icons.person_add,color: MyColors.primary,),
-                                          SizedBox(width: 10,),
-                                          Text("Tambah Instansi",
-                                              style: TextStyle(fontSize: 12, color: MyColors.primary)),
-                                        ],
+                                      Icon(
+                                        Icons.add_business_outlined,
+                                        color: MyColors.primary,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text("Tambah Instansi",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: MyColors.primary)),
+                                    ],
                                       ))),
                             ),
                             SizedBox(height: 20,),
@@ -380,25 +415,89 @@ class _DashboardContentState extends State<DashboardContent> {
                                           Icon(Icons.person_add,color: companySelected == null ? MyColors.grey_20 : MyColors.primary,),
                                           SizedBox(width: 10,),
                                           Text("Tambah Admin",
-                                              style: TextStyle(fontSize: 12, color: companySelected == null ? MyColors.grey_20 : MyColors.primary)),
-                                        ],
-                                      ))),
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: companySelected == null
+                                                  ? MyColors.grey_20
+                                                  : MyColors.primary)),
+                                    ],
+                                  ))),
                             ),
-                            SizedBox(height: 20,),
+                            SizedBox(
+                              height: 20,
+                            ),
                             RaisedButton(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0),
-                                  side: BorderSide(color: companySelected == null ? MyColors.grey_20 : MyColors.primary)),
+                                  side: BorderSide(
+                                      color: companySelected == null
+                                          ? MyColors.grey_20
+                                          : MyColors.primary)),
                               onPressed: () {
-                                if(companySelected!= null){
+                                if (companySelected != null) {
+                                  showDialog(
+                                          context: context,
+                                          builder: (_) =>
+                                              AddAdminDialog(companySelected))
+                                      .then((value) {
+                                    if (value) {}
+                                  });
+                                } else {
+                                  Tools.showToast(
+                                      "Anda belum memilih instansi");
+                                }
+                              },
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              color: Colors.white,
+                              textColor: MyColors.primary,
+                              child: Container(
+                                  width: double.infinity,
+                                  child: Center(
+                                      child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.group_add_outlined,
+                                        color: companySelected == null
+                                            ? MyColors.grey_20
+                                            : MyColors.primary,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text("Tambah Instansi untuk Admin",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: companySelected == null
+                                                  ? MyColors.grey_20
+                                                  : MyColors.primary)),
+                                    ],
+                                  ))),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            RaisedButton(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  side: BorderSide(
+                                      color: companySelected == null
+                                          ? MyColors.grey_20
+                                          : MyColors.primary)),
+                              onPressed: () {
+                                if (companySelected != null) {
                                   showDialog(
                                       context: context,
-                                      builder: (_) => AddDeviceDialog(userId, token,username,position,companySelected.referal, ruasJalanSelected)).then((value) {
-                                    if (value) {
-
-                                    }
+                                      builder: (_) => AddDeviceDialog(
+                                          userId,
+                                          token,
+                                          username,
+                                          position,
+                                          companySelected.referal,
+                                          ruasJalanSelected)).then((value) {
+                                    if (value) {}
                                   });
-                                }else{
+                                } else {
                                   Tools.showToast("Pilih instansi yang akan ditambahkan.");
                                 }
                               },
@@ -433,7 +532,14 @@ class _DashboardContentState extends State<DashboardContent> {
   Widget _dropDownCompany(
       BuildContext context, UserModelNew item, String itemDesignation) {
     return Container(
-      child: (item?.id == null) || (!isControlAllowed ? position == "user" ? item.referal != referalFrom ? true : false : item?.username != username : false)
+      child: (item?.id == null) ||
+              (!isControlAllowed
+                  ? position == "user"
+                      ? !referalFrom2.contains(item.referal)
+                          ? true
+                          : false
+                      : item?.username != username
+                  : false)
           ? ListTile(
               contentPadding: EdgeInsets.all(0),
               title: Text(
@@ -446,7 +552,7 @@ class _DashboardContentState extends State<DashboardContent> {
               leading: Icon(Icons.person),
               title: Text(item.name),
               subtitle: Text(
-                item.position,
+                item.username,
               ),
             ),
     );
@@ -465,9 +571,42 @@ class _DashboardContentState extends State<DashboardContent> {
             ),
       child: ListTile(
         selected: isSelected,
-        title: Text(item.name, style: TextStyle( color: !isControlAllowed ? position == "user" ? referalFrom == item.referal ? MyColors.grey_80 : MyColors.grey_20 : username == item.username ? MyColors.grey_80 : MyColors.grey_20 : MyColors.grey_80 ),),
-        subtitle: Text(item.position, style: TextStyle( color: !isControlAllowed ? position == "user" ? referalFrom == item.referal ? MyColors.grey_80 : MyColors.grey_20 : username == item.username ? MyColors.grey_80 : MyColors.grey_20 : MyColors.grey_80 ),),
-        leading: Icon(Icons.person, color: !isControlAllowed ? position == "user" ? referalFrom == item.referal ? MyColors.grey_80 : MyColors.grey_20 : username == item.username ? MyColors.grey_80 : MyColors.grey_20 : MyColors.grey_80),
+        title: Text(
+          item.name,
+          style: TextStyle(
+              color: !isControlAllowed
+                  ? position == "user"
+                      ? referalFrom2.contains(item.referal)
+                          ? MyColors.grey_80
+                          : MyColors.grey_20
+                      : username == item.username
+                          ? MyColors.grey_80
+                          : MyColors.grey_20
+                  : MyColors.grey_80),
+        ),
+        subtitle: Text(
+          item.username,
+          style: TextStyle(
+              color: !isControlAllowed
+                  ? position == "user"
+                      ? referalFrom2.contains(item.referal)
+                          ? MyColors.grey_80
+                          : MyColors.grey_20
+                      : username == item.username
+                          ? MyColors.grey_80
+                          : MyColors.grey_20
+                  : MyColors.grey_80),
+        ),
+        leading: Icon(Icons.person,
+            color: !isControlAllowed
+                ? position == "user"
+                    ? referalFrom2.contains(item.referal)
+                        ? MyColors.grey_80
+                        : MyColors.grey_20
+                    : username == item.username
+                        ? MyColors.grey_80
+                        : MyColors.grey_20
+                : MyColors.grey_80),
       ),
     );
   }
@@ -475,18 +614,18 @@ class _DashboardContentState extends State<DashboardContent> {
   Widget _dropDownStreet(
       BuildContext context, StreetModel item, String itemDesignation) {
     return Container(
-      child: (item?.ruasJalan == null)
+      child: (item?.ruasJalan == null) || ruasJalanSelected.isEmpty
           ? ListTile(
-        contentPadding: EdgeInsets.all(0),
-        title: Text(
-          MyStrings.noInstansiItemSelected,
-          style: TextStyle(color: MyColors.grey_40),
-        ),
-      )
+              contentPadding: EdgeInsets.all(0),
+              title: Text(
+                MyStrings.noRuasSelected,
+                style: TextStyle(color: MyColors.grey_40),
+              ),
+            )
           : ListTile(
-        contentPadding: EdgeInsets.all(0),
-        title: Text(item.ruasJalan),
-      ),
+              contentPadding: EdgeInsets.all(0),
+              title: Text(item.ruasJalan),
+            ),
     );
   }
 
@@ -497,15 +636,41 @@ class _DashboardContentState extends State<DashboardContent> {
       decoration: !isSelected
           ? null
           : BoxDecoration(
-        border: Border.all(color: Theme.of(context).primaryColor),
-        borderRadius: BorderRadius.circular(5),
-        color: Colors.white,
-      ),
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
       child: ListTile(
-        selected: isSelected,
-        title: Text(item.ruasJalan)
-      ),
+          selected: isSelected,
+          title: Text(
+            item.ruasJalan,
+            style: TextStyle(
+                color:
+                    isSelectable(item) ? MyColors.grey_80 : MyColors.grey_20),
+          )),
     );
+  }
+
+  bool isSelectable(StreetModel item) {
+    if (companySelected != null) {
+      if (item.referalRuasFrom == companySelected.referal) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+
+    // if(companySelected != null){
+    //   if(item.referalFrom == companySelected.referal){
+    //     return true;
+    //   }else{
+    //     return false;
+    //   }
+    // }else{
+    //   return true;
+    // }
   }
 
   Future<List<UserModelNew>> getDataCompany(filter) async {
@@ -522,8 +687,8 @@ class _DashboardContentState extends State<DashboardContent> {
 
   Future<List<StreetModel>> getDataStreet(filter) async {
     String query = filter == '' ? '0' : filter;
-    var params =  {
-      "query": query
+    var params = {
+      "query": query,
     };
     String url = "http://" +
         FlavorConfig.instance.variables[MyVariables.baseUrl] +

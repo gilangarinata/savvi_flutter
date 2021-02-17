@@ -14,8 +14,10 @@ class MyVariables {
         schedule: "/schedule",
         getUserReferal: "/users/getUserReferal",
         getUserQuery: "/users/getGoverment",
-        getStreet : "/devices/streets",
-        getDeviceV3 : "/devices/v3"
+        getStreet: "/devices/streets",
+        getDeviceV3: "/devices/v3",
+        getAllUserAdmin: "/users/getAllUserAdmin",
+        addReferalFrom: "/users/addReferalFrom",
       };
       return prodFlavor;
     } else {
@@ -30,8 +32,10 @@ class MyVariables {
         schedule: "/schedule",
         getUserReferal: "/users/getUserReferal",
         getUserQuery: "/users/getGoverment",
-        getStreet : "/devices/streets",
-        getDeviceV3 : "/devices/v3"
+        getStreet: "/devices/streets",
+        getDeviceV3: "/devices/v3",
+        getAllUserAdmin: "/users/getAllUserAdmin",
+        addReferalFrom: "/users/addReferalFrom",
       };
       return devFlavor;
     }
@@ -49,5 +53,6 @@ class MyVariables {
   static const String getUserQuery = "getUserQuery";
   static const String getStreet = "getUserStreet";
   static const String getDeviceV3 = "getDeviceV3";
-
+  static const String getAllUserAdmin = "getAllUserAdmin";
+  static const String addReferalFrom = "addReferalFrom";
 }

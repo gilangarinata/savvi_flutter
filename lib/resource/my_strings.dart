@@ -82,10 +82,12 @@ class MyStrings {
 
   static const String cannotReachServer = "Gagal mengambil data dari server.";
 
-  static const String superuserPrivilege = "Hanya superuser 1 yang bisa menggunakan fitur ini";
+  static const String superuserPrivilege =
+      "Hanya superuser 1 yang bisa menggunakan fitur ini";
   static const String instansi = "Instansi";
-  static const String noInstansiItemSelected = "Tidak ada instansi yang dipilih";
+  static const String noInstansiItemSelected =
+      "Tidak ada instansi yang dipilih";
   static const String ruasJalan = "Ruas Jalan";
-  static const String noRuasSelected = "Tidak ada jalan yang dipilih";
+  static const String noRuasSelected = "Tidak ada ruas jalan yang dipilih";
   static const String tampilkan = "Tampilkan";
 }

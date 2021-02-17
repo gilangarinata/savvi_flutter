@@ -69,15 +69,17 @@ class Result {
 }
 
 class Hardware {
-  Hardware({
-    this.id,
-    this.name,
-    this.hardwareId,
-    this.brightness,
-    this.brightnessSchedule,
-    this.active,
-    this.lamp,
-  });
+  Hardware(
+      {this.id,
+      this.name,
+      this.hardwareId,
+      this.brightness,
+      this.brightnessSchedule,
+      this.active,
+      this.lamp,
+      this.latitude,
+      this.longitude,
+      this.photoPath});
 
   String id;
   String name;
@@ -86,24 +88,37 @@ class Hardware {
   int brightnessSchedule;
   bool active;
   bool lamp;
+  String latitude;
+  String longitude;
+  String photoPath;
 
   factory Hardware.fromJson(Map<String, dynamic> json) => Hardware(
-    id: json["_id"],
-    name: json["name"],
-    hardwareId: json["hardwareId"],
-    brightness: json["brightness"] == null ? null : json["brightness"],
-    brightnessSchedule: json["brightnessSchedule"] == null ? 0 : json["brightnessSchedule"],
-    lamp: json["lamp"] == null ? null : json["lamp"],
-    active: json["active"] == null ? null : json["active"],
-  );
+        id: json["_id"],
+        name: json["name"],
+        hardwareId: json["hardwareId"],
+        brightness: json["brightness"] == null ? null : json["brightness"],
+        brightnessSchedule:
+            json["brightnessSchedule"] == null ? 0 : json["brightnessSchedule"],
+        lamp: json["lamp"] == null ? null : json["lamp"],
+        active: json["active"] == null ? null : json["active"],
+        latitude: json["latitude"] == null ? null : json["latitude"],
+        longitude: json["longitude"] == null ? null : json["longitude"],
+        photoPath: json["photoPath"] == null ? null : json["photoPath"],
+      );
 
-  Map<String, dynamic> toJson() => {
-    "_id": id,
-    "name": name,
-    "hardwareId": hardwareId,
-    "brightness": brightness == null ? null : brightness,
-    "brightnessSchedule": brightnessSchedule == null ? 0 : brightnessSchedule,
-    "lamp": lamp == null ? null : lamp,
-    "active": active == null ? null : active,
-  };
+  Map<String, dynamic> toJson() =>
+      {
+        "_id": id,
+        "name": name,
+        "hardwareId": hardwareId,
+        "brightness": brightness == null ? null : brightness,
+        "brightnessSchedule": brightnessSchedule == null
+            ? 0
+            : brightnessSchedule,
+        "lamp": lamp == null ? null : lamp,
+        "active": active == null ? null : active,
+        "latitude": latitude == null ? null : latitude,
+        "longitude": longitude == null ? null : longitude,
+        "photoPath": photoPath == null ? null : photoPath,
+      };
 }

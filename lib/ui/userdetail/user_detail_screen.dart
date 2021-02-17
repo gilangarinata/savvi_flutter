@@ -1,30 +1,22 @@
-import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mylamp_flutter_v4_stable/pref_manager/pref_data.dart';
-import 'package:mylamp_flutter_v4_stable/network/model/request/update_lamp_request.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/device_response.dart';
+import 'package:mylamp_flutter_v4_stable/network/model/response/hardware_response.dart'
+    as HR;
 import 'package:mylamp_flutter_v4_stable/network/repository/dashboard_repository.dart';
+import 'package:mylamp_flutter_v4_stable/pref_manager/pref_data.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_colors.dart';
-import 'package:mylamp_flutter_v4_stable/resource/my_field_style.dart';
-import 'package:mylamp_flutter_v4_stable/resource/my_strings.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_text.dart';
-import 'package:mylamp_flutter_v4_stable/ui/bluetooth/DiscoveryPage.dart';
-import 'package:mylamp_flutter_v4_stable/ui/bluetooth/setup_bluetooth_dialog.dart';
-import 'package:mylamp_flutter_v4_stable/ui/dashboard/add_device_dialog.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/dashboard_bloc.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/dashboard_contract.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/delete_dialog.dart';
 import 'package:mylamp_flutter_v4_stable/ui/detail/hardware_detail_screen.dart';
-import 'package:mylamp_flutter_v4_stable/ui/introduction/introduction.dart';
+import 'package:mylamp_flutter_v4_stable/ui/maps/map_screen.dart';
+import 'package:mylamp_flutter_v4_stable/ui/photo/photo_screen.dart';
 import 'package:mylamp_flutter_v4_stable/utils/tools.dart';
-import 'package:mylamp_flutter_v4_stable/widget/my_snackbar.dart';
 import 'package:mylamp_flutter_v4_stable/widget/progress_loading.dart';
 import 'package:mylamp_flutter_v4_stable/widget/scenario_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class UserDetailScreen extends StatefulWidget {
   String userId;
@@ -85,8 +77,15 @@ class _DashboardContentState extends State<DashboardContent> {
 
   _DashboardContentState(this.username, this.position, this.userId);
 
+  String authUser = "";
+  String authPosition = "";
+
   void getPrefData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      authPosition = prefs.getString(PrefData.POSITION);
+      authUser = prefs.getString(PrefData.USERNAME);
+    });
     isControlAllowed = true;
     token = prefs.getString(PrefData.TOKEN);
     bloc = BlocProvider.of<DashboardBloc>(context);
@@ -148,7 +147,19 @@ class _DashboardContentState extends State<DashboardContent> {
               isLoading = false;
               isError = false;
               firstLoad = false;
-              item = event.items;
+
+              if (authPosition == "user") {
+                List<Result> newDevice = [];
+                for (Result result in event.items) {
+                  if (result.username == authUser) {
+                    newDevice.add(result);
+                  }
+                }
+                item = newDevice;
+              } else {
+                print("no user" + authUser);
+                item = event.items;
+              }
               countDevice = item.length;
               isLampLoading = new List(countDevice);
             });
@@ -218,99 +229,218 @@ class _DashboardContentState extends State<DashboardContent> {
               clipBehavior: Clip.antiAliasWithSaveLayer,
               child: Container(
                 padding: EdgeInsets.all(15),
-                child: Row(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 60,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(Icons.lightbulb, color:  item[pos].hardware.active ? !item[pos].hardware.lamp ? item[pos].hardware.brightnessSchedule == 0 ? Colors.red : Colors.green :  item[pos].hardware.brightness == 0 ? Colors.red : Colors.green : Colors.grey , ),
-                          SizedBox(height: 5,),
-                          Text(item[pos].hardware.active ? !item[pos].hardware.lamp ?  item[pos].hardware.brightnessSchedule.toString() +"%" :  item[pos].hardware.brightness.toString() + "%" : "Offline", style: TextStyle(fontSize: 10) )
-                        ],
-                      ),
-                    ),
-                    Container(width: 15),
-                    Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        children: <Widget>[
-                          MyText.myTextDescription(
-                              item[pos].name,
-                              MyColors.grey_80),
-                          Container(height: 5),
-                          MyText.myTextDescription(
-                              item[pos].description,
-                              MyColors.grey_40),
-                          Container(height: 5),
-                          MyText.myTextDescription('ID : ${item[pos].hardware.hardwareId}',
-                              MyColors.grey_40),
-                        ]),
-                    Spacer(),
-                    Visibility(
-                      visible: isLampLoading[pos] ?? false,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: ProgressLoading(
-                          size: 13,
-                          stroke: 2,
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(width: 15),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            MyText.myTextHeader2(
+                                item[pos].name, MyColors.grey_80),
+                            Container(height: 5),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 50,
+                                  child: MyText.myTextDescription(
+                                      'X', MyColors.grey_40),
+                                ),
+                                MyText.myTextDescription(
+                                    ': ', MyColors.grey_40),
+                                MyText.myTextDescription(
+                                    '${item[pos].hardware.latitude}',
+                                    MyColors.grey_40),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 50,
+                                  child: MyText.myTextDescription(
+                                      'Y', MyColors.grey_40),
+                                ),
+                                MyText.myTextDescription(
+                                    ': ', MyColors.grey_40),
+                                MyText.myTextDescription(
+                                    '${item[pos].hardware.longitude}',
+                                    MyColors.grey_40),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 50,
+                                  child: MyText.myTextDescription(
+                                      'admin', MyColors.grey_40),
+                                ),
+                                MyText.myTextDescription(
+                                    ': ', MyColors.grey_40),
+                                MyText.myTextDescription(
+                                    '${item[pos].username}', MyColors.grey_40),
+                              ],
+                            ),
+                          ],
                         ),
-                      ),
+                        Spacer(),
+                        Container(
+                          width: 60,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.lightbulb,
+                                color: item[pos].hardware.active
+                                    ? !item[pos].hardware.lamp
+                                        ? item[pos]
+                                                    .hardware
+                                                    .brightnessSchedule ==
+                                                0
+                                            ? Colors.red
+                                            : Colors.green
+                                        : item[pos].hardware.brightness == 0
+                                            ? Colors.red
+                                            : Colors.green
+                                    : Colors.grey,
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                  item[pos].hardware.active
+                                      ? !item[pos].hardware.lamp
+                                          ? item[pos]
+                                                  .hardware
+                                                  .brightnessSchedule
+                                                  .toString() +
+                                              "%"
+                                          : item[pos]
+                                                  .hardware
+                                                  .brightness
+                                                  .toString() +
+                                              "%"
+                                      : "Offline",
+                                  style: TextStyle(fontSize: 10))
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(
-                      child: Visibility(
-                        visible: isControlAllowed,
-                        child: ToggleSwitch(
-                          minWidth: 55.0,
-                          initialLabelIndex: item[pos].hardware.lamp != null ? item[pos].hardware.lamp ? 1 : 0 : 1,
-                          activeBgColor: Colors.cyan,
-                          activeFgColor: Colors.white,
-                          inactiveBgColor: Colors.black26,
-                          inactiveFgColor: Colors.white,
-                          labels: ['S', 'M'],
-                          icons: [Icons.schedule, Icons.emoji_people],
-                          onToggle: (index) {
-                            setState(() {
-                              isLampLoading[pos] =
-                              true;
-                              if (item[pos]
-                                  .hardware
-                                  .lamp ??
-                                  false) {
-                                UpdateLampRequest
-                                request =
-                                UpdateLampRequest(
-                                    item[pos]
-                                        .hardware
-                                        .hardwareId,
-                                    false);
-                                bloc.add(
-                                    UpdateLampEvent(
-                                        request
-                                            .reqBody(),
-                                        token));
-                              } else {
-                                UpdateLampRequest
-                                request =
-                                UpdateLampRequest(
-                                    item[pos]
-                                        .hardware
-                                        .hardwareId,
-                                    true);
-                                bloc.add(
-                                    UpdateLampEvent(
-                                        request
-                                            .reqBody(),
-                                        token));
-                              }
-                            });
-                          },
-                        ),
-                      ),
+                      height: 20,
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            if (item[pos].hardware.latitude != null &&
+                                item[pos].hardware.longitude != null) {
+                              HR.Result hardware = new HR.Result(
+                                  latitude: item[pos].hardware.latitude,
+                                  longitude: item[pos].hardware.longitude,
+                                  lamp: item[pos].hardware.lamp);
+                              Tools.addScreen(context, MapScreen(hardware));
+                            }
+                          },
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xfffcc19e),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.map,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                Text(
+                                  "Map",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {},
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xffac9eff),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.streetview,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                Text(
+                                  "Street",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            if (item[pos].hardware.photoPath != null) {
+                              Tools.addScreen(
+                                  context,
+                                  PhotoScreen("000",
+                                      item[pos].hardware.photoPath, "360", ""));
+                            } else {
+                              Tools.showToast("Foto belum tersedia");
+                            }
+                          },
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                // color: Color(0xff1367ac),
+                                color: Color(0xfffb9e9e)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.image,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                Text(
+                                  "Photo",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),

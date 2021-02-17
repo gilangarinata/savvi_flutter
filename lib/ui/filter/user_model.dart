@@ -6,21 +6,32 @@ class UserModelNew {
   final String position;
   final String username;
   final String referal;
+  final List<dynamic> referalFrom2;
 
-  UserModelNew({this.id, this.createdAt, this.name, this.avatar, this.position, this.username,this.referal});
+  UserModelNew(
+      {this.id,
+      this.createdAt,
+      this.name,
+      this.avatar,
+      this.position,
+      this.username,
+      this.referal,
+      this.referalFrom2});
 
   factory UserModelNew.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return UserModelNew(
-      id: json["_id"],
-      createdAt:
-          json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
-      name: json["name"] == null ? "Undefined Name : ${json["username"]}"  : json["name"],
-      avatar: json["avatar"],
-      username: json["username"],
-      position: json["position"],
-      referal: json["referal"] == null ? "undefined" : json["referal"]
-    );
+        id: json["_id"],
+        createdAt: json["createdAt"] == null
+            ? null
+            : DateTime.parse(json["createdAt"]),
+        name: json["name"] == null ? "undefined" : json["name"],
+        avatar: json["avatar"],
+        username: json["username"],
+        position: json["position"],
+        referal: json["referal"] == null ? "undefined" : json["referal"],
+        referalFrom2:
+            json["referalFrom2"] == null ? "undefined" : json["referalFrom2"]);
   }
 
   static List<UserModelNew> fromJsonList(List list) {

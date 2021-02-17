@@ -1,7 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mylamp_flutter_v4_stable/network/model/UserModel.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/request/add_device_request.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/user_add_device_response.dart';
 import 'package:mylamp_flutter_v4_stable/network/repository/dashboard_repository.dart';
@@ -93,7 +92,6 @@ class _DialogContentState extends State<DialogContent> {
       userId = widget.userId;
       _ruasJalanController.text = widget.ruasJalan;
     });
-
 
     bloc.add(FetchUsers(widget.position, widget.referal));
   }
@@ -206,12 +204,20 @@ class _DialogContentState extends State<DialogContent> {
                                 if (_formKey.currentState.validate()) {
                                   var name = _nameController.text.trim();
                                   var description = "null";
-                                  var ruasJalan = _ruasJalanController.text.trim();
+                                  var ruasJalan =
+                                      _ruasJalanController.text.trim();
                                   var hardwareId =
                                       _hardwareIdController.text.trim();
+                                  var referalRuasFrom = widget.referal;
+
                                   AddDeviceRequest request =
-                                      new AddDeviceRequest(name, description,
-                                          hardwareId, userId,ruasJalan);
+                                      new AddDeviceRequest(
+                                          name,
+                                          description,
+                                          hardwareId,
+                                          userId,
+                                          ruasJalan,
+                                          referalRuasFrom);
                                   bloc.add(AddDevice(
                                       request.reqBody(), widget.token));
                                 }

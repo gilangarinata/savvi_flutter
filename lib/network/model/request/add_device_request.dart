@@ -4,6 +4,7 @@ class AddDeviceRequest {
   String hardwareId;
   String userId;
   String ruasJalan;
+  String referalRuasFrom;
 
   Map<String, String> reqBody() {
     Map<String, String> qParams = {
@@ -11,10 +12,12 @@ class AddDeviceRequest {
       'description': description,
       'hardwareId': hardwareId,
       'userId': userId,
-      'ruasJalan' : ruasJalan
+      'ruasJalan': ruasJalan,
+      'referalRuasFrom': referalRuasFrom
     };
     return qParams;
   }
 
-  AddDeviceRequest(this.name, this.description, this.hardwareId, this.userId, this.ruasJalan);
+  AddDeviceRequest(this.name, this.description, this.hardwareId, this.userId,
+      this.ruasJalan, this.referalRuasFrom);
 }
