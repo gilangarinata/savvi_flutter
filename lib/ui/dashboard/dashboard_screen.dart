@@ -1,8 +1,7 @@
-import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mylamp_flutter_v4_stable/pref_manager/pref_data.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/request/update_lamp_request.dart';
@@ -27,6 +26,7 @@ import 'package:mylamp_flutter_v4_stable/widget/progress_loading.dart';
 import 'package:mylamp_flutter_v4_stable/widget/scenario_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -81,6 +81,8 @@ class _DashboardContentState extends State<DashboardContent> {
 
     isControlAllowed = position == KEY_SU_1 ? true : false;
 
+
+
     userId = prefs.getString(PrefData.USER_ID);
     token = prefs.getString(PrefData.TOKEN);
     bloc = BlocProvider.of<DashboardBloc>(context);
@@ -109,7 +111,7 @@ class _DashboardContentState extends State<DashboardContent> {
           title: MyText.myTextHeader1("Home", MyColors.grey_80),
           actions: <Widget>[
             Visibility(
-              visible: isControlAllowed,
+              visible: isControlAllowed && !kIsWeb,
               child: IconButton(
                   icon: Icon(
                     Icons.bluetooth,

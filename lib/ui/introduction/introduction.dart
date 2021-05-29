@@ -11,12 +11,20 @@ class IntroductionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.red,
+      color: Colors.white,
       child: Stack(
         children: <Widget>[
           Container(
             width: MediaQuery.of(context).size.width,
-            child: Image.asset('assets/back_dashboard.jpg',fit: BoxFit.cover,),
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: Image.asset('assets/new_wallpaper_3.jpeg',fit: BoxFit.cover,),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 150),
+              child: Image.asset('assets/logo.png',width: 130,),
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -34,7 +42,8 @@ class IntroductionScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Image.asset('assets/logo.png',width: 170,),
+                    Image.asset('assets/logo2.png',width: 180,),
+                    SizedBox(height: 10,),
                     MyText.myTextHeader1(
                         MyStrings.introHeader, MyColors.grey_80),
                     SizedBox(

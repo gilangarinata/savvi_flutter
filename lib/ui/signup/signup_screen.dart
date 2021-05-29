@@ -96,14 +96,25 @@ class _SignUpContentState extends State<SignUpContent> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
                   child: Image.asset(
-                    "assets/img_register.jpg",
+                    "assets/new_wallpaper_3.jpeg",
                     width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.4,
                     fit: BoxFit.cover,
                   ),
                 ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 100),
+                    child: Image.asset('assets/logo.png',width: 150,),
+                  ),
+                ),
                 Positioned(
-                  bottom: 0,
+                  bottom: 50,
                   left: 0,
                   right: 0,
                   child: Container(
@@ -114,7 +125,6 @@ class _SignUpContentState extends State<SignUpContent> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Image.asset('assets/logo.png',width: 100,),
                           SizedBox(height: 10,),
                           MyText.myTextHeader2(
                                widget.isSU2 ? "Tambah Instansi" : "Tambah Admin", MyColors.grey_80),

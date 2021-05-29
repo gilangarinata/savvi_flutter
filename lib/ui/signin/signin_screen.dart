@@ -103,16 +103,27 @@ class _SignInContentState extends State<SignInContent> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
                   child: Image.asset(
-                    "assets/img_login.jpg",
+                    "assets/new_wallpaper_3.jpeg",
                     width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.5,
                     fit: BoxFit.cover,
                   ),
                 ),
+                // Align(
+                //   alignment: Alignment.topCenter,
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(top: 150),
+                //     child: Image.asset('assets/logo.png',width: 150,),
+                //   ),
+                // ),
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 0,
+                  bottom: 120,
                   child: Container(
                     color: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
@@ -121,7 +132,7 @@ class _SignInContentState extends State<SignInContent> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Image.asset('assets/logo.png',width: 170,),
+                          Image.asset('assets/logo2.png',width: 180,),
                           SizedBox(height: 10,),
                           MyText.myTextHeader1(
                               MyStrings.signInPage, MyColors.grey_80),

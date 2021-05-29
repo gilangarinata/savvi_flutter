@@ -21,8 +21,6 @@ abstract class DashboardRepository {
 class DashboardRepositoryImpl implements DashboardRepository {
   @override
   Future<List<Result>> fetchDevice(String userId, String ruasJalan, String token) async {
-    // var uri = Uri.http(FlavorConfig.instance.variables[MyVariables.baseUrl],
-    //     FlavorConfig.instance.variables[MyVariables.device] + "/$userId");
     var uri = Uri.http(FlavorConfig.instance.variables[MyVariables.baseUrl],
         FlavorConfig.instance.variables[MyVariables.getDeviceV3] );
     Map<String,String> userHeader = {"Authorization" : "Bearer $token"};

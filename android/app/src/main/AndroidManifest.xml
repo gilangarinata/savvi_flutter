@@ -16,6 +16,7 @@
     <application
         android:name=".Application"
         android:label="SETI Smart System"
+        android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
         <activity

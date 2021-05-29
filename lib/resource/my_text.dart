@@ -4,6 +4,7 @@ class MyText {
   static RichText myTextHeader1(String title, Color color) {
     return RichText(
       maxLines: 2,
+      textAlign: TextAlign.center,
       overflow: TextOverflow.ellipsis,
       text: TextSpan(
         style: TextStyle(
@@ -36,6 +37,7 @@ class MyText {
   static RichText myTextDescription(String title, Color color) {
     return RichText(
       maxLines: 5,
+      textAlign: TextAlign.center,
       overflow: TextOverflow.ellipsis,
       text: TextSpan(
         style: TextStyle(color: color, fontSize: 16.0),

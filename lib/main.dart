@@ -13,6 +13,7 @@ import 'package:mylamp_flutter_v4_stable/ui/splashscreen/splash_screen.dart';
 import 'package:mylamp_flutter_v4_stable/utils/PushNotificationManager.dart';
 import 'package:mylamp_flutter_v4_stable/utils/tools.dart';
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -63,6 +64,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    if(GetPlatform.isWeb) return;
     firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         try{

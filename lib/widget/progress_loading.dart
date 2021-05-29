@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_colors.dart';
 
 class ProgressLoading extends StatelessWidget {
@@ -20,8 +19,7 @@ class ProgressLoading extends StatelessWidget {
       child: Container(
         width: size,
         height: size,
-        child: Platform.isIOS ? Theme(data: ThemeData(cupertinoOverrideTheme: CupertinoThemeData(brightness: isDark ? Brightness.dark : Brightness.light)),
-            child: CupertinoActivityIndicator()) : CircularProgressIndicator(strokeWidth: stroke)
+        child: CircularProgressIndicator(strokeWidth: stroke)
       ),
     );
   }

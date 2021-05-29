@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/hardware_response.dart';
@@ -306,7 +304,7 @@ class _DashboardContentState extends State<DashboardContent> {
                                           height: 10,
                                         ),
                                         MyText.myTextHeader1(
-                                            item.alarm, Colors.white)
+                                            item.alarm == "0" ? "Normal" : "Rusak", Colors.white)
                                       ],
                                     ),
                                   ),

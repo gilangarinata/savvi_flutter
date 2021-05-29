@@ -1,7 +1,7 @@
 class MyStrings {
-  static const String introHeader = "Kontrol dengan mudah lampu jalan.";
+  static const String introHeader = "Smart System\nAlat Penerangan Jalan";
   static const String introDescription =
-      "Pantau dan dapatkan akses ke perangkat Anda hanya dengan sekali klik. Jangan pernah kehilangan momen Anda";
+      "Pantau dan dapatkan akses ke perangkat Anda hanya dengan sekali klik";
   static const String createAccount = "Tambah User Baru";
   static const String loginWithId = "Login";
   static const String privacyPolicy = "Privacy Policy";
