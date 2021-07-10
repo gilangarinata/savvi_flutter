@@ -18,6 +18,8 @@ class MyVariables {
         getDeviceV3: "/devices/v3",
         getAllUserAdmin: "/users/getAllUserAdmin",
         addReferalFrom: "/users/addReferalFrom",
+        getKml: "/devices/get_earth_value/user",
+        getKwhMonthly : "/devices/history/monthly",
       };
       return prodFlavor;
     } else {
@@ -36,6 +38,8 @@ class MyVariables {
         getDeviceV3: "/devices/v3",
         getAllUserAdmin: "/users/getAllUserAdmin",
         addReferalFrom: "/users/addReferalFrom",
+        getKml: "/devices/get_earth_value/user",
+        getKwhMonthly : "/devices/history/monthly",
       };
       return devFlavor;
     }
@@ -55,4 +59,6 @@ class MyVariables {
   static const String getDeviceV3 = "getDeviceV3";
   static const String getAllUserAdmin = "getAllUserAdmin";
   static const String addReferalFrom = "addReferalFrom";
+  static const String getKml = "getKml";
+  static const String getKwhMonthly = "getkwh";
 }

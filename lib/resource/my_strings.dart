@@ -41,6 +41,7 @@ class MyStrings {
 
   static const String schedule = "Jadwal";
   static const String history = "Riwayat";
+  static const String historyMonthly = "Riwayat Bulanan";
 
 
   static const String save = "SIMPAN";

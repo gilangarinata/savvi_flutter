@@ -1,5 +1,15 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:isolate';
+import 'dart:ui';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_flavor/flutter_flavor.dart';
+import 'package:marquee/marquee.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/device_response.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/hardware_response.dart'
     as HR;
@@ -7,16 +17,31 @@ import 'package:mylamp_flutter_v4_stable/network/repository/dashboard_repository
 import 'package:mylamp_flutter_v4_stable/pref_manager/pref_data.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_colors.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_text.dart';
+import 'package:mylamp_flutter_v4_stable/resource/my_variables.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/dashboard_bloc.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/dashboard_contract.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/delete_dialog.dart';
 import 'package:mylamp_flutter_v4_stable/ui/detail/hardware_detail_screen.dart';
+import 'package:mylamp_flutter_v4_stable/ui/history/history_screen_monthly.dart';
+import 'package:mylamp_flutter_v4_stable/ui/maps/gmap_screen.dart';
 import 'package:mylamp_flutter_v4_stable/ui/maps/map_screen.dart';
+import 'package:mylamp_flutter_v4_stable/ui/maps/map_web.dart';
 import 'package:mylamp_flutter_v4_stable/ui/photo/photo_screen.dart';
+import 'package:mylamp_flutter_v4_stable/ui/userdetail/KmlModel.dart';
 import 'package:mylamp_flutter_v4_stable/utils/tools.dart';
 import 'package:mylamp_flutter_v4_stable/widget/progress_loading.dart';
 import 'package:mylamp_flutter_v4_stable/widget/scenario_view.dart';
+import 'package:open_file/open_file.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'dart:io' as Io;
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:html' as html;
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+
 
 class UserDetailScreen extends StatefulWidget {
   String userId;
@@ -31,15 +56,19 @@ class UserDetailScreen extends StatefulWidget {
 }
 
 class _UserDetailScreenState extends State<UserDetailScreen> {
+
   @override
   Widget build(BuildContext context) {
+
+    final platform = Theme.of(context).platform;
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<DashboardBloc>(
           create: (context) => DashboardBloc(DashboardRepositoryImpl()),
         )
       ],
-      child: DashboardContent(widget.userId, widget.position, widget.username,widget.ruasJalan),
+      child: DashboardContent(widget.userId, widget.position, widget.username,widget.ruasJalan,platform),
     );
   }
 }
@@ -49,9 +78,10 @@ class DashboardContent extends StatefulWidget {
   String position;
   String username;
   String ruasJalan;
+  final TargetPlatform platform;
 
 
-  DashboardContent(this.userId, this.position, this.username,this.ruasJalan);
+  DashboardContent(this.userId, this.position, this.username,this.ruasJalan,this.platform);
 
   @override
   _DashboardContentState createState() => _DashboardContentState(username,position,userId);
@@ -74,11 +104,18 @@ class _DashboardContentState extends State<DashboardContent> {
 
   bool isControlAllowed = false;
   String KEY_SU_1 = "superuser1";
+  String _localPath;
 
   _DashboardContentState(this.username, this.position, this.userId);
 
   String authUser = "";
   String authPosition = "";
+
+  void downloadFile(String url){
+    html.AnchorElement anchorElement =  new html.AnchorElement(href: url);
+    anchorElement.download = url;
+    anchorElement.click();
+  }
 
   void getPrefData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -92,14 +129,84 @@ class _DashboardContentState extends State<DashboardContent> {
     bloc.add(FetchDevice(userId, token, widget.ruasJalan));
   }
 
+  Future<KmlModel> getDataEarth(Result result) async {
+    var params = {
+      "longitude" : result.hardware.longitude,
+      "latitude" : result.hardware.latitude,
+      "name" : result.name,
+      "hid" : result.hardware.hardwareId
+    };
+    String url = "http://" +
+        FlavorConfig.instance.variables[MyVariables.baseUrl] +
+        FlavorConfig.instance.variables[MyVariables.getKml];
+
+    Response response = await Dio().post(url,
+      data: jsonEncode(params),
+    );
+
+    KmlModel models = KmlModel.fromJsonObject(response.data);
+    return models;
+  }
+
+  Future<void> _prepareSaveDir() async {
+    _localPath =
+        (await _findLocalPath()) + Io.Platform.pathSeparator + 'Downloadsavvi';
+
+    final savedDir = Io.Directory(_localPath);
+    bool hasExisted = await savedDir.exists();
+    if (!hasExisted) {
+      savedDir.create();
+    }
+  }
+
+  Future<String> _findLocalPath() async {
+    final directory = widget.platform == TargetPlatform.android
+        ? await getExternalStorageDirectory()
+        : await getApplicationDocumentsDirectory();
+    return directory?.path;
+  }
+
   @override
   void initState() {
     super.initState();
     getPrefData();
+    _prepareSaveDir();
+    initDownloader();
   }
+
+
+  static void downloadCallback(
+      String id, DownloadTaskStatus status, int progress) {
+    print(
+        'Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
+    final SendPort send =
+    IsolateNameServer.lookupPortByName('downloader_send_port');
+    send.send([id, status, progress]);
+  }
+
+
+  void initDownloader() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await FlutterDownloader.initialize(
+        debug: true // optional: set false to disable printing logs to console
+    );
+    FlutterDownloader.registerCallback(downloadCallback);
+  }
+
+
 
   Future<void> onRefreshData() async {
     bloc.add(FetchDevice(userId, token, widget.ruasJalan));
+  }
+
+  void downloadKml(String downloadUrl, String filename) async {
+    print("download di : " + _localPath);
+    await FlutterDownloader.enqueue(
+      url: downloadUrl,
+      savedDir: _localPath,
+      showNotification: false, // show download progress in status bar (for Android)
+      openFileFromNotification: false, // click on notification to open downloaded file (for Android)
+    );
   }
 
   @override
@@ -115,9 +222,51 @@ class _DashboardContentState extends State<DashboardContent> {
             children: [
               Icon(Icons.person, color: MyColors.grey_40,),
               SizedBox(width: 10,),
-              MyText.myTextDescription(username, MyColors.grey_40),
-              Spacer(),
-              MyText.myTextDescription(widget.ruasJalan, MyColors.grey_40)
+              // Flexible(
+              //   child: RichText(
+              //     maxLines: 1,
+              //     textAlign: TextAlign.center,
+              //     overflow: TextOverflow.ellipsis,
+              //     text: TextSpan(
+              //       style: TextStyle(color: MyColors.grey_40,  fontSize: 16.0),
+              //       text: username + " | " + widget.ruasJalan,
+              //     ),
+              //   ),
+              // ),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  width: 70,
+                  height: 20,
+                  child: Marquee(
+                    text: username + " | " + widget.ruasJalan + "     ",
+                    style: TextStyle(fontWeight: FontWeight.w300)
+                  ),
+                ),
+              ),
+              RaisedButton(
+                padding: EdgeInsets.symmetric(vertical: 0,horizontal: 0),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    side: BorderSide(color: MyColors.primary)),
+                onPressed: () {
+                  Tools.addScreen(context, HistoryScreenMonthly(widget.userId, widget.ruasJalan));
+                },
+                color: Colors.white,
+                textColor: MyColors.primary,
+                child: Container(
+                    width: 50,
+                    child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("kWh/m",
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: MyColors.primary)),
+                          ],
+                        ))),
+              )
             ],
           ),
           ),
@@ -143,6 +292,16 @@ class _DashboardContentState extends State<DashboardContent> {
               firstLoad = false;
             });
           } else if (event is LoadedState) {
+            if(event.items.isNotEmpty){
+              if(event.items[0].kml_filename.isNotEmpty && event.items[0].kml_url.isNotEmpty){
+                try{
+                  // downloadKml(event.items[0].kml_url, event.items[0].kml_filename);
+                }catch(e){
+                  print("gagal download file " + e);
+                }
+              }
+            }
+
             setState(() {
               isLoading = false;
               isError = false;
@@ -344,11 +503,16 @@ class _DashboardContentState extends State<DashboardContent> {
                           onTap: () {
                             if (item[pos].hardware.latitude != null &&
                                 item[pos].hardware.longitude != null) {
-                              HR.Result hardware = new HR.Result(
-                                  latitude: item[pos].hardware.latitude,
-                                  longitude: item[pos].hardware.longitude,
-                                  lamp: item[pos].hardware.lamp);
-                              Tools.addScreen(context, MapScreen(hardware));
+                              if(kIsWeb){
+                                Tools.addScreen(context, GmapSceen(double.parse(item[pos].hardware.latitude),double.parse(item[pos].hardware.longitude), false));
+                                // Tools.addScreen(context, MapWeb());
+                              }else {
+                                HR.Result hardware = new HR.Result(
+                                    latitude: item[pos].hardware.latitude,
+                                    longitude: item[pos].hardware.longitude,
+                                    lamp: item[pos].hardware.lamp);
+                                Tools.addScreen(context, MapScreen(hardware));
+                              }
                             }
                           },
                           child: Container(
@@ -377,7 +541,57 @@ class _DashboardContentState extends State<DashboardContent> {
                           ),
                         ),
                         InkWell(
-                          onTap: () {},
+                          onTap: () async {
+                            final ProgressDialog pr = ProgressDialog(context,isDismissible: false);
+
+                            if(kIsWeb){
+                              Tools.addScreen(context, GmapSceen(double.parse(item[pos].hardware.latitude),double.parse(item[pos].hardware.longitude), true));
+                              // KmlModel kmlModel = await getDataEarth(item[pos]);
+                              // downloadFile(kmlModel.downloadUrl);
+                            }else{
+                              await pr.show();
+                              KmlModel kmlModel = await getDataEarth(item[pos]);
+                              if(kmlModel != null){
+                                print("download kml : " + kmlModel.downloadUrl);
+                                downloadKml(kmlModel.downloadUrl, kmlModel.filename);
+                                Timer(Duration(seconds: 3), () {
+                                  print("open file : " + kmlModel.filename);
+                                  openFile(kmlModel.filename);
+                                  pr.hide();
+                                });
+                              }
+
+                            }
+
+
+                            // try{
+                            //   openFile(item[pos].kml_filename);
+                            // }catch(e){
+                            //   print("gagal buka file " + e);
+                            // }
+
+
+//                             //read and write
+//                             final filename = 'test.pdf';
+//                             var bytes = await rootBundle.load("assets/apj2.kmz");
+//                             String dir = (await getApplicationDocumentsDirectory()).path;
+//                             writeToFile(bytes,'$dir/$filename');
+// //write to app path
+//                             Future<void> writeToFile(ByteData data, String path) {
+//                             final buffer = data.buffer;
+//                             return new File(path).writeAsBytes(
+//                             buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+//                             }
+//
+//                             final directory = await getapp();
+//                             OpenFile.open("assets/apj2.kmz");
+
+                            // HR.Result hardware = new HR.Result(
+                            //     latitude: item[pos].hardware.latitude,
+                            //     longitude: item[pos].hardware.longitude,
+                            //     lamp: item[pos].hardware.lamp);
+                            // Tools.addScreen(context, EarthScreen(hardware));
+                          },
                           child: Container(
                             width: 50,
                             height: 50,
@@ -513,6 +727,12 @@ class _DashboardContentState extends State<DashboardContent> {
   //     ),
   //   );
   // }
+
+  Future<void> openFile(String filename) async {
+    final filePath = _localPath + '/' + filename;
+    print(filePath);
+    await OpenFile.open(filePath);
+  }
 }
 
 

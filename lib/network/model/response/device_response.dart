@@ -36,7 +36,9 @@ class Result {
     this.hardware,
     this.user,
     this.position,
-    this.username
+    this.username,
+    this.kml_url,
+    this.kml_filename
   });
 
   String name;
@@ -46,6 +48,8 @@ class Result {
   String user;
   String position;
   String username;
+  String kml_url;
+  String kml_filename;
 
   factory Result.fromJson(Map<String, dynamic> json) => Result(
     name: json["name"],
@@ -54,7 +58,9 @@ class Result {
     hardware: Hardware.fromJson(json["hardware"]),
     user: json["user"],
     position: json["position"],
-    username: json["username"]
+      username: json["username"] == null ? "" : json["username"],
+    kml_url: json["kml_url"] == null ? "" : json["kml_url"],
+    kml_filename: json["kml_filename"] == null ? "" : json["kml_filename"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -64,7 +70,9 @@ class Result {
     "hardware": hardware.toJson(),
     "user": user,
     "position" : position,
-    "username" : username
+    "username" : username,
+    "kml_url" : kml_url,
+    "kml_filename" : kml_filename
   };
 }
 
@@ -99,7 +107,7 @@ class Hardware {
         brightness: json["brightness"] == null ? null : json["brightness"],
         brightnessSchedule:
             json["brightnessSchedule"] == null ? 0 : json["brightnessSchedule"],
-        lamp: json["lamp"] == null ? null : json["lamp"],
+        lamp: json["lamp"] == null ? false : json["lamp"],
         active: json["active"] == null ? null : json["active"],
         latitude: json["latitude"] == null ? null : json["latitude"],
         longitude: json["longitude"] == null ? null : json["longitude"],
@@ -115,7 +123,7 @@ class Hardware {
         "brightnessSchedule": brightnessSchedule == null
             ? 0
             : brightnessSchedule,
-        "lamp": lamp == null ? null : lamp,
+        "lamp": lamp == null ? false : lamp,
         "active": active == null ? null : active,
         "latitude": latitude == null ? null : latitude,
         "longitude": longitude == null ? null : longitude,
