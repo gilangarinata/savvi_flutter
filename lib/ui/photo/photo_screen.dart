@@ -34,8 +34,9 @@ class PhotoScreen extends StatefulWidget {
   String photoPath;
   String hardwareName;
   String id;
+  String connectedTo;
 
-  PhotoScreen(this.hardwareId, this.photoPath, this.hardwareName,this.id);
+  PhotoScreen(this.hardwareId, this.photoPath, this.hardwareName,this.id, this.connectedTo);
 
   @override
   _PhotoScreenState createState() => _PhotoScreenState();
@@ -51,7 +52,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
               HardwareDetailBloc(HardwareDetailRepositoryImpl()),
         )
       ],
-      child: PhotoContent(widget.hardwareId,widget.photoPath, context,widget.hardwareName,widget.id),
+      child: PhotoContent(widget.hardwareId,widget.photoPath, context,widget.hardwareName,widget.id,widget.connectedTo),
     );
   }
 }
@@ -62,8 +63,9 @@ class PhotoContent extends StatefulWidget {
   BuildContext parentContext;
   String hardwareName;
   String id;
+  String connectedTo;
 
-  PhotoContent(this.hardwareId, this.photoPath, this.parentContext, this.hardwareName, this.id);
+  PhotoContent(this.hardwareId, this.photoPath, this.parentContext, this.hardwareName, this.id, this.connectedTo);
 
   @override
   _PhotoContentState createState() => _PhotoContentState();
@@ -163,7 +165,7 @@ class _PhotoContentState extends State<PhotoContent> {
               isError = false;
               pr.hide();
             });
-            Tools.changeScreen(context, HardwareDetailScreen(widget.id, widget.hardwareName));
+            Tools.changeScreen(context, HardwareDetailScreen(widget.id, widget.hardwareName,widget.connectedTo));
           }
         },
         child: PhotoView(

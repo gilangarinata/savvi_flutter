@@ -132,7 +132,9 @@ class _SliderWidgetStateContent extends State<SliderWidgetContent> {
                     child: Slider(
                         value: _value,
                         onChangeEnd: (value){
-                          bloc.add(UpdateBrightness(widget.hardwareId, (value*100).toInt().toString()));
+                          var val = (value*100).toInt();
+                          if(val == 100) val = 99;
+                          bloc.add(UpdateBrightness(widget.hardwareId, val.toString()));
                         },
                         onChanged: (value) {
                           setState(() {

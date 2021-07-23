@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:mylamp_flutter_v4_stable/resource/my_variables.dart';
+
 DeviceResponse deviceResponseFromJson(String str) => DeviceResponse.fromJson(json.decode(str));
 
 String deviceResponseToJson(DeviceResponse data) => json.encode(data.toJson());
@@ -50,6 +52,15 @@ class Result {
   String username;
   String kml_url;
   String kml_filename;
+  String _connectedTo;
+
+
+  void setconnectedTo(String value) {
+    _connectedTo = value;
+  }
+
+
+  String get connectedTo => _connectedTo;
 
   factory Result.fromJson(Map<String, dynamic> json) => Result(
     name: json["name"],
@@ -104,9 +115,9 @@ class Hardware {
         id: json["_id"],
         name: json["name"],
         hardwareId: json["hardwareId"],
-        brightness: json["brightness"] == null ? null : json["brightness"],
+        brightness: json["brightness"] == null ? null : json["brightness"] >= MyVariables.thresholdBrightness ? 100 : json["brightness"],
         brightnessSchedule:
-            json["brightnessSchedule"] == null ? 0 : json["brightnessSchedule"],
+            json["brightnessSchedule"] == null ? 0 : json["brightnessSchedule"] >= MyVariables.thresholdBrightness ? 100 :json["brightnessSchedule"],
         lamp: json["lamp"] == null ? false : json["lamp"],
         active: json["active"] == null ? null : json["active"],
         latitude: json["latitude"] == null ? null : json["latitude"],

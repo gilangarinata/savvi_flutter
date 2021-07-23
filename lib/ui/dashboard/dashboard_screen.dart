@@ -285,7 +285,7 @@ class _DashboardContentState extends State<DashboardContent> {
             horizontal: 10, vertical: 5),
         child: InkWell(
           onTap: (){
-            Tools.addScreen(context, HardwareDetailScreen(item[pos].hardware.id, item[pos].name));
+            // Tools.addScreen(context, HardwareDetailScreen(item[pos].hardware.id, item[pos].name));
           },
           onLongPress: (){
             showDialog(context: context,builder: (_) => CustomEventDialog(item[pos].id, token, item[pos].hardware.hardwareId)).then((value) {

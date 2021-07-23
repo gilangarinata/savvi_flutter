@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:isolate';
 import 'dart:ui';
-
+import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,7 +38,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as Io;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:html' as html;
+// import 'dart:html' as html;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 
@@ -111,11 +111,11 @@ class _DashboardContentState extends State<DashboardContent> {
   String authUser = "";
   String authPosition = "";
 
-  void downloadFile(String url){
-    html.AnchorElement anchorElement =  new html.AnchorElement(href: url);
-    anchorElement.download = url;
-    anchorElement.click();
-  }
+  // void downloadFile(String url){
+  //   html.AnchorElement anchorElement =  new html.AnchorElement(href: url);
+  //   anchorElement.download = url;
+  //   anchorElement.click();
+  // }
 
   void getPrefData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -301,6 +301,78 @@ class _DashboardContentState extends State<DashboardContent> {
                 }
               }
             }
+            // List<Result> lastNewDevice = [];
+            // List<String> segments = [];
+            // for(Result result in event.items){
+            //   var pos = result.name.lastIndexOf('-');
+            //
+            //   if(pos != null){
+            //     var segment = result.name.substring(pos + 1, result.name.length);
+            //     if(!segments.contains(segment)){
+            //       segments.add(segment);
+            //     }
+            //   }
+            // }
+            //
+            // for(String segment in segments){
+            //   List<Result> veryNewDevices = [];
+            //   List<Result> res = [];
+            //   Result resSelectedAp;
+            //   for(Result result in event.items){
+            //     if(result.name.contains(segment)){
+            //       res.add(result);
+            //     }
+            //   }
+            //
+            //   List<int> aints = [];
+            //   for (Result newRes in res){
+            //     var aStr = newRes.hardware.hardwareId.replaceAll(new RegExp(r'[^0-9]'),'');
+            //     var aInt = int.parse(aStr);
+            //     aints.add(aInt);
+            //   }
+            //
+            //
+            //   var minimum = aints.reduce(min);
+            //   for (Result newRes in res){
+            //     var aStr = newRes.hardware.hardwareId.replaceAll(new RegExp(r'[^0-9]'),'');
+            //     var aInt = int.parse(aStr);
+            //     if(minimum == aInt){
+            //       resSelectedAp = newRes;
+            //       newRes.setconnectedTo("AP");
+            //       veryNewDevices.add(newRes);
+            //     }else{
+            //       veryNewDevices.add(newRes);
+            //       // var correctInt = aInt - 1;
+            //       // Result resSelected;
+            //       // for (Result newRes2 in res) {
+            //       //   var aStr = newRes2.hardware.hardwareId.replaceAll(
+            //       //       new RegExp(r'[^0-9]'), '');
+            //       //   var aInt = int.parse(aStr);
+            //       //   if(aInt == correctInt){
+            //       //     resSelected = newRes2;
+            //       //   }
+            //       // }
+            //       // if(resSelected != null){
+            //       //   newRes.setconnectedTo(resSelected.name);
+            //       // }else{
+            //       //   newRes.setconnectedTo("");
+            //       // }
+            //       // veryNewDevices.add(newRes);
+            //     }
+            //     aints.add(aInt);
+            //   }
+            //
+            //   for (Result newRes in veryNewDevices){
+            //     if(newRes.connectedTo != "AP"){
+            //       if(resSelectedAp != null){
+            //         newRes.setconnectedTo(resSelectedAp.name);
+            //       }
+            //       lastNewDevice.add(newRes);
+            //     }else{
+            //       lastNewDevice.add(newRes);
+            //     }
+            //   }
+            // }
 
             setState(() {
               isLoading = false;
@@ -314,6 +386,8 @@ class _DashboardContentState extends State<DashboardContent> {
                     newDevice.add(result);
                   }
                 }
+
+
                 item = newDevice;
               } else {
                 print("no user" + authUser);
@@ -368,7 +442,7 @@ class _DashboardContentState extends State<DashboardContent> {
             horizontal: 10, vertical: 5),
         child: InkWell(
           onTap: (){
-            Tools.addScreen(context, HardwareDetailScreen(item[pos].hardware.id, item[pos].name));
+            Tools.addScreen(context, HardwareDetailScreen(item[pos].hardware.id, item[pos].name, item[pos].connectedTo));
           },
           onLongPress: (){
             showDialog(context: context,builder: (_) => CustomEventDialog(item[pos].id, token, item[pos].hardware.hardwareId)).then((value) {
@@ -623,7 +697,7 @@ class _DashboardContentState extends State<DashboardContent> {
                               Tools.addScreen(
                                   context,
                                   PhotoScreen("000",
-                                      item[pos].hardware.photoPath, "360", ""));
+                                      item[pos].hardware.photoPath, "360", "",""));
                             } else {
                               Tools.showToast("Foto belum tersedia");
                             }

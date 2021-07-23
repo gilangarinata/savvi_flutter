@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:mylamp_flutter_v4_stable/resource/my_variables.dart';
+
 HardwareResponse hardwareResponseFromJson(String str) => HardwareResponse.fromJson(json.decode(str));
 
 String hardwareResponseToJson(HardwareResponse data) => json.encode(data.toJson());
@@ -42,6 +44,8 @@ class Result {
     this.lamp,
     this.brightness,
     this.isActive,
+    this.lastSeen,
+    this.connectedTo
   });
 
   String id;
@@ -60,6 +64,8 @@ class Result {
   bool lamp;
   int brightness;
   bool isActive;
+  String lastSeen;
+  String connectedTo;
 
   factory Result.fromJson(Map<String, dynamic> json) => Result(
     id: json["_id"],
@@ -78,6 +84,8 @@ class Result {
     lamp: json["lamp"],
     brightness: json["brightness"],
     isActive: json["isActive"],
+    lastSeen: json["lastUpdate"],
+    connectedTo: json["connectedTo"] == null ? "-" : json["connectedTo"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -97,5 +105,7 @@ class Result {
     "lamp": lamp,
     "brightness": brightness,
     "isActive": isActive,
+    "lastSeen": lastSeen,
+    "connectedTo": connectedTo,
   };
 }

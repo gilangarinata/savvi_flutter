@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/hardware_response.dart';
 import 'package:mylamp_flutter_v4_stable/network/repository/hardware_detail_repository.dart';
 import 'package:mylamp_flutter_v4_stable/pref_manager/pref_data.dart';
@@ -34,8 +35,9 @@ import 'package:toggle_switch/toggle_switch.dart';
 class HardwareDetailScreen extends StatefulWidget {
   String hardwareId;
   String title;
+  String connectedTo;
 
-  HardwareDetailScreen(this.hardwareId, this.title);
+  HardwareDetailScreen(this.hardwareId, this.title, this.connectedTo);
 
   @override
   _HardwareDetailScreenState createState() => _HardwareDetailScreenState();
@@ -44,6 +46,8 @@ class HardwareDetailScreen extends StatefulWidget {
 class _HardwareDetailScreenState extends State<HardwareDetailScreen> {
   @override
   Widget build(BuildContext context) {
+    print(widget.hardwareId.toString());
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<HardwareDetailBloc>(
@@ -51,7 +55,7 @@ class _HardwareDetailScreenState extends State<HardwareDetailScreen> {
               HardwareDetailBloc(HardwareDetailRepositoryImpl()),
         )
       ],
-      child: DashboardContent(widget.hardwareId, widget.title),
+      child: DashboardContent(widget.hardwareId, widget.title,widget.connectedTo),
     );
   }
 }
@@ -59,8 +63,9 @@ class _HardwareDetailScreenState extends State<HardwareDetailScreen> {
 class DashboardContent extends StatefulWidget {
   String hardwareId;
   String title;
+  String connectedTo;
 
-  DashboardContent(this.hardwareId, this.title);
+  DashboardContent(this.hardwareId, this.title, this.connectedTo);
 
   @override
   _DashboardContentState createState() => _DashboardContentState();
@@ -135,6 +140,44 @@ class _DashboardContentState extends State<DashboardContent> {
     );
   }
 
+  String convertDate(String date){
+    if(date == null){
+      return "No Data";
+    }else{
+      var temp = DateTime.parse(date);
+      print(temp.isUtc);
+      // prints true
+      var local = temp.toLocal();
+      String formattedDate = DateFormat('dd MMM yyyy HH:mm:ss').format(local);
+      return formattedDate;
+    }
+  }
+
+  Widget getTextIsLastUpdate(Result item){
+    if(!isSolarCell && isControlAllowed){
+      return MyText.myTextDescription2(
+          convertDate(item.lastSeen),
+          Colors.white);
+    }else{
+      return MyText.myTextHeader1(
+          item.chargingTime.toString() + " W/m",
+          Colors.white);
+    }
+  }
+
+  Widget getTextIsLastUpdateTitle(Result item){
+    if(!isSolarCell && isControlAllowed){
+      return MyText.myTextDescription2(
+          MyStrings.lastUpdate,
+          Colors.white);
+    }else{
+      return MyText.myTextHeader2(
+          MyStrings.chargingTime,
+          Colors.white);
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,7 +218,7 @@ class _DashboardContentState extends State<DashboardContent> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PhotoScreen(item.hardwareId, item.photoPath, widget.title, item.id),
+                          builder: (context) => PhotoScreen(item.hardwareId, item.photoPath, widget.title, item.id, widget.connectedTo),
                         ),
                       ).then((value) {
                         if(value == 200){
@@ -536,8 +579,55 @@ class _DashboardContentState extends State<DashboardContent> {
                                 ),
                               ),
                               Expanded(
-                                child: Visibility(
-                                  visible: isSolarCell,
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6)),
+                                  color: Colors.white,
+                                  elevation: 3,
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  child: Container(
+                                    height: 100,
+                                    padding: EdgeInsets.all(10),
+                                    color: Colors.grey,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      children: [
+                                        getTextIsLastUpdateTitle(item),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        getTextIsLastUpdate(item),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Visibility(
+                                          visible: !isSolarCell && isControlAllowed,
+                                          child: MyText.myTextDescription2(
+                                              MyStrings.connectedTo,
+                                              Colors.white),
+                                        ),
+                                        Visibility(
+                                          visible: !isSolarCell && isControlAllowed,
+                                          child: MyText.myTextDescription2(
+                                              item.connectedTo,
+                                              Colors.white),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: isSolarCell && isControlAllowed,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
                                   child: Card(
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(6)),
@@ -552,24 +642,37 @@ class _DashboardContentState extends State<DashboardContent> {
                                         mainAxisAlignment:
                                         MainAxisAlignment.center,
                                         children: [
-                                          MyText.myTextHeader2(
-                                              MyStrings.chargingTime,
+                                          MyText.myTextDescription2(
+                                              isSolarCell ? MyStrings.lastUpdate : MyStrings.powerUsed ,
                                               Colors.white),
                                           SizedBox(
-                                            height: 10,
+                                            height: 5,
                                           ),
-                                          MyText.myTextHeader1(
-                                              item.chargingTime.toString() + " W/m",
-                                              Colors.white)
+                                          MyText.myTextDescription2(
+                                              convertDate(item.lastSeen),
+                                              Colors.white),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          MyText.myTextDescription2(
+                                              MyStrings.connectedTo,
+                                              Colors.white),
+                                          MyText.myTextDescription2(
+                                              item.connectedTo,
+                                              Colors.white),
                                         ],
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                Expanded(
+                                  child: Container(),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
+
                         Visibility(
                           visible: isControlAllowed,
                           child: Padding(
@@ -637,6 +740,7 @@ class _DashboardContentState extends State<DashboardContent> {
         ),
       ),
     );
+
   }
 
   FloatingActionButton floatingLoading() {

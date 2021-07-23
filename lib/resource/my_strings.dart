@@ -58,6 +58,8 @@ class MyStrings {
 
   static const String notification = "Notification";
   static const String chargingTime = "Charging";
+  static const String connectedTo = "Connected To :";
+  static const String lastUpdate = "Last Update:";
   static const String dischargingTime = "Discharging";
   static const String powerUsed = "Power used";
   static const String capacity = "Capacity";

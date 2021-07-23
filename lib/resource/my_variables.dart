@@ -61,4 +61,6 @@ class MyVariables {
   static const String addReferalFrom = "addReferalFrom";
   static const String getKml = "getKml";
   static const String getKwhMonthly = "getkwh";
+
+  static const int thresholdBrightness = 95;
 }
