@@ -3,27 +3,22 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:mylamp_flutter_v4_stable/network/model/request/update_lamp_request.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/hardware_response.dart';
 import 'package:mylamp_flutter_v4_stable/network/repository/hardware_detail_repository.dart';
 import 'package:mylamp_flutter_v4_stable/pref_manager/pref_data.dart';
-import 'package:mylamp_flutter_v4_stable/network/model/request/update_lamp_request.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_colors.dart';
-import 'package:mylamp_flutter_v4_stable/resource/my_field_style.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_strings.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_text.dart';
-import 'package:mylamp_flutter_v4_stable/ui/bluetooth/setup_bluetooth_dialog.dart';
 import 'package:mylamp_flutter_v4_stable/ui/detail/hardware_detail_bloc.dart';
 import 'package:mylamp_flutter_v4_stable/ui/detail/hardware_detail_contract.dart';
 import 'package:mylamp_flutter_v4_stable/ui/history/history_screen.dart';
-import 'package:mylamp_flutter_v4_stable/ui/introduction/introduction.dart';
 import 'package:mylamp_flutter_v4_stable/ui/maps/map_screen.dart';
 import 'package:mylamp_flutter_v4_stable/ui/photo/photo_screen.dart';
 import 'package:mylamp_flutter_v4_stable/ui/schedule/schedule_screen.dart';
 import 'package:mylamp_flutter_v4_stable/utils/tools.dart';
-import 'package:mylamp_flutter_v4_stable/widget/my_sliders.dart';
 import 'package:mylamp_flutter_v4_stable/widget/my_snackbar.dart';
 import 'package:mylamp_flutter_v4_stable/widget/progress_loading.dart';
 import 'package:mylamp_flutter_v4_stable/widget/scenario_view.dart';
@@ -203,37 +198,49 @@ class _DashboardContentState extends State<DashboardContent> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  if(hardwareId != null){
+                  if (hardwareId != null) {
                     Tools.addScreen(context, HistoryScreen(hardwareId));
                   }
                 }), // overflow men
-            IconButton(
-                icon: Icon(
-                  item != null ? item.photoPath != null ? Icons.image : Icons.camera_enhance : Icons.camera_enhance,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  if(item != null){
-                    if(item.photoPath != null){
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PhotoScreen(item.hardwareId, item.photoPath, widget.title, item.id, widget.connectedTo),
-                        ),
-                      ).then((value) {
-                        if(value == 200){
-                          bloc.add(FetchHardware(widget.hardwareId, token));
+            Visibility(
+              visible: Platform.isAndroid,
+              child: IconButton(
+                  icon: Icon(
+                    item != null
+                        ? item.photoPath != null
+                            ? Icons.image
+                            : Icons.camera_enhance
+                        : Icons.camera_enhance,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    if (item != null) {
+                      if (item.photoPath != null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PhotoScreen(
+                                item.hardwareId,
+                                item.photoPath,
+                                widget.title,
+                                item.id,
+                                widget.connectedTo),
+                          ),
+                        ).then((value) {
+                          if (value == 200) {
+                            bloc.add(FetchHardware(widget.hardwareId, token));
+                          }
+                        });
+                      } else {
+                        if (isControlAllowed) {
+                          showSheet(context, item.hardwareId);
+                        } else {
+                          Tools.showToast(MyStrings.superuserPrivilege);
                         }
-                      });
-                    }else{
-                      if(isControlAllowed) {
-                        showSheet(context, item.hardwareId);
-                      }else{
-                        Tools.showToast(MyStrings.superuserPrivilege);
                       }
                     }
-                  }
-                }), // overflow menu// u
+                  }),
+            ), // overflow menu// u
           ]),
       body: BlocListener<HardwareDetailBloc, HardwareDetailState>(
         listener: (context, event) {

@@ -238,7 +238,7 @@ class _DialogContentState extends State<DialogContent> {
                               "minute": minute.toString(),
                               "hour": hour.toString(),
                               "day": day.toString(),
-                              "brightness": _brightness == "100" ? "99" :_brightness,
+                              "brightness": _brightness,
                               "userId": widget.userId
                             };
                             bloc.add(EditScheduledEvent(req, widget.item.id));
@@ -247,7 +247,7 @@ class _DialogContentState extends State<DialogContent> {
                               "minute": minute.toString(),
                               "hour": hour.toString(),
                               "day": day.toString(),
-                              "brightness": _brightness == "100" ? "99" :_brightness,
+                              "brightness": _brightness,
                               "userId": widget.userId,
                               "hardwareId": widget.hardwareId
                             };

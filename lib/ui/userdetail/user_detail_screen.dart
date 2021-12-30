@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' as Io;
 import 'dart:isolate';
 import 'dart:ui';
-import 'dart:math';
+
 import 'package:dio/dio.dart';
+
+// import 'dart:html' as html;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,21 +29,15 @@ import 'package:mylamp_flutter_v4_stable/ui/detail/hardware_detail_screen.dart';
 import 'package:mylamp_flutter_v4_stable/ui/history/history_screen_monthly.dart';
 import 'package:mylamp_flutter_v4_stable/ui/maps/gmap_screen.dart';
 import 'package:mylamp_flutter_v4_stable/ui/maps/map_screen.dart';
-import 'package:mylamp_flutter_v4_stable/ui/maps/map_web.dart';
 import 'package:mylamp_flutter_v4_stable/ui/photo/photo_screen.dart';
 import 'package:mylamp_flutter_v4_stable/ui/userdetail/KmlModel.dart';
 import 'package:mylamp_flutter_v4_stable/utils/tools.dart';
 import 'package:mylamp_flutter_v4_stable/widget/progress_loading.dart';
 import 'package:mylamp_flutter_v4_stable/widget/scenario_view.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'dart:io' as Io;
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:path_provider/path_provider.dart';
-// import 'dart:html' as html;
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 
 
@@ -172,6 +170,9 @@ class _DashboardContentState extends State<DashboardContent> {
     getPrefData();
     _prepareSaveDir();
     initDownloader();
+
+    const oneSec = const Duration(seconds: 5);
+    new Timer.periodic(oneSec, (Timer t) => getPrefData());
   }
 
 
@@ -220,29 +221,38 @@ class _DashboardContentState extends State<DashboardContent> {
           iconTheme: IconThemeData(color: MyColors.grey_60),
           title: Row(
             children: [
-              Icon(Icons.person, color: MyColors.grey_40,),
-              SizedBox(width: 10,),
-              // Flexible(
-              //   child: RichText(
-              //     maxLines: 1,
-              //     textAlign: TextAlign.center,
-              //     overflow: TextOverflow.ellipsis,
-              //     text: TextSpan(
-              //       style: TextStyle(color: MyColors.grey_40,  fontSize: 16.0),
-              //       text: username + " | " + widget.ruasJalan,
-              //     ),
-              //   ),
-              // ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  width: 70,
-                  height: 20,
-                  child: Marquee(
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Icon(
+                Icons.arrow_back,
+                color: MyColors.grey_40,
+              ),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            // Flexible(
+            //   child: RichText(
+            //     maxLines: 1,
+            //     textAlign: TextAlign.center,
+            //     overflow: TextOverflow.ellipsis,
+            //     text: TextSpan(
+            //       style: TextStyle(color: MyColors.grey_40,  fontSize: 16.0),
+            //       text: username + " | " + widget.ruasJalan,
+            //     ),
+            //   ),
+            // ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                width: 70,
+                height: 20,
+                child: Marquee(
                     text: username + " | " + widget.ruasJalan + "     ",
-                    style: TextStyle(fontWeight: FontWeight.w300)
-                  ),
-                ),
+                    style: TextStyle(fontWeight: FontWeight.w300)),
+              ),
               ),
               RaisedButton(
                 padding: EdgeInsets.symmetric(vertical: 0,horizontal: 0),
@@ -547,21 +557,14 @@ class _DashboardContentState extends State<DashboardContent> {
                               SizedBox(
                                 height: 5,
                               ),
-                              Text(
-                                  item[pos].hardware.active
-                                      ? !item[pos].hardware.lamp
-                                          ? item[pos]
-                                                  .hardware
-                                                  .brightnessSchedule
-                                                  .toString() +
-                                              "%"
-                                          : item[pos]
-                                                  .hardware
-                                                  .brightness
-                                                  .toString() +
-                                              "%"
-                                      : "Offline",
-                                  style: TextStyle(fontSize: 10))
+                              Visibility(
+                                visible: true,
+                                child: Text(
+                                    item[pos].hardware.active
+                                        ? "Online"
+                                        : "Offline",
+                                    style: TextStyle(fontSize: 10)),
+                              )
                             ],
                           ),
                         ),

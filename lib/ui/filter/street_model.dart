@@ -3,12 +3,14 @@ class StreetModel {
   final String referalFrom;
   final List<dynamic> referalFrom2;
   final String referalRuasFrom;
+  final String user;
 
   StreetModel(
       {this.ruasJalan,
       this.referalFrom,
       this.referalFrom2,
-      this.referalRuasFrom});
+      this.referalRuasFrom,
+      this.user});
 
   factory StreetModel.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -16,6 +18,7 @@ class StreetModel {
       ruasJalan: json["ruasJalan"] == null ? null : json["ruasJalan"],
       referalFrom: json["referalFrom"] == null ? null : json["referalFrom"],
       referalFrom2: json["referalFrom2"] == null ? null : json["referalFrom2"],
+      user: json["user"] == null ? null : json["user"],
       referalRuasFrom:
           json["referalRuasFrom"] == null ? null : json["referalRuasFrom"],
     );

@@ -15,11 +15,11 @@ class MyText {
   }
 
   static TextStyle title(BuildContext context){
-    return Theme.of(context).textTheme.title;
+    return Theme.of(context).textTheme.caption;
   }
 
   static TextStyle subhead(BuildContext context){
-    return Theme.of(context).textTheme.subhead;
+    return Theme.of(context).textTheme.subtitle1;
   }
 
   static RichText myTextHeader2(String title, Color color) {

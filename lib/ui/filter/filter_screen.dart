@@ -2,44 +2,30 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_flavor/flutter_flavor.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mylamp_flutter_v4_stable/network/model/UserModel.dart';
-import 'package:mylamp_flutter_v4_stable/network/model/response/user_add_device_response.dart';
-import 'package:mylamp_flutter_v4_stable/pref_manager/pref_data.dart';
-import 'package:mylamp_flutter_v4_stable/network/model/request/update_lamp_request.dart';
 import 'package:mylamp_flutter_v4_stable/network/model/response/device_response.dart';
 import 'package:mylamp_flutter_v4_stable/network/repository/dashboard_repository.dart';
-import 'package:mylamp_flutter_v4_stable/resource/my_button.dart';
+import 'package:mylamp_flutter_v4_stable/pref_manager/pref_data.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_colors.dart';
-import 'package:mylamp_flutter_v4_stable/resource/my_field_style.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_strings.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_text.dart';
 import 'package:mylamp_flutter_v4_stable/resource/my_variables.dart';
 import 'package:mylamp_flutter_v4_stable/ui/bluetooth/DiscoveryPage.dart';
-import 'package:mylamp_flutter_v4_stable/ui/bluetooth/setup_bluetooth_dialog.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/add_device_dialog.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/dashboard_bloc.dart';
 import 'package:mylamp_flutter_v4_stable/ui/dashboard/dashboard_contract.dart';
-import 'package:mylamp_flutter_v4_stable/ui/dashboard/delete_dialog.dart';
-import 'package:mylamp_flutter_v4_stable/ui/detail/hardware_detail_screen.dart';
 import 'package:mylamp_flutter_v4_stable/ui/filter/add_admin_company.dart';
 import 'package:mylamp_flutter_v4_stable/ui/filter/profile_dialog.dart';
 import 'package:mylamp_flutter_v4_stable/ui/filter/street_model.dart';
 import 'package:mylamp_flutter_v4_stable/ui/filter/user_model.dart';
-import 'package:mylamp_flutter_v4_stable/ui/introduction/introduction.dart';
 import 'package:mylamp_flutter_v4_stable/ui/signup/signup_screen.dart';
 import 'package:mylamp_flutter_v4_stable/ui/userdetail/user_detail_screen.dart';
 import 'package:mylamp_flutter_v4_stable/utils/tools.dart';
-import 'package:mylamp_flutter_v4_stable/widget/my_snackbar.dart';
-import 'package:mylamp_flutter_v4_stable/widget/progress_loading.dart';
-import 'package:mylamp_flutter_v4_stable/widget/scenario_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toggle_switch/toggle_switch.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 
 class FilterScreen extends StatefulWidget {
   @override
@@ -286,13 +272,7 @@ class _DashboardContentState extends State<DashboardContent> {
                         label: MyStrings.ruasJalan,
                         onFind: (String filter) => getDataStreet(filter),
                         onChanged: (StreetModel data) {
-                          if (companySelected != null) {
-                            if (!data.referalFrom2
-                                .contains(companySelected.referal)) {
-                              return;
-                            }
-                          }
-
+                          if (!validateStreet(data)) return;
                           setState(() {
                             ruasJalanSelected = data.ruasJalan;
                             streetModelSelected = data;
@@ -644,15 +624,23 @@ class _DashboardContentState extends State<DashboardContent> {
             item.ruasJalan,
             style: TextStyle(
                 color:
-                    isSelectable(item) ? MyColors.grey_80 : MyColors.grey_20),
+                    validateStreet(item) ? MyColors.grey_80 : MyColors.grey_20),
           )),
     );
   }
 
   bool isSelectable(StreetModel item) {
     if (companySelected != null) {
-      if (item.referalRuasFrom == companySelected.referal) {
-        return true;
+      if (item.referalFrom2.contains(companySelected.referal)) {
+        if (position == "user") {
+          if (userId != item.user) {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return true;
+        }
       } else {
         return false;
       }
@@ -692,7 +680,8 @@ class _DashboardContentState extends State<DashboardContent> {
         FlavorConfig.instance.variables[MyVariables.baseUrl] +
         FlavorConfig.instance.variables[MyVariables.getStreet];
 
-    Response response = await Dio().post(url,
+    Response response = await Dio().post(
+      url,
       options: Options(headers: {
         HttpHeaders.contentTypeHeader: "application/json",
       }),
@@ -703,4 +692,13 @@ class _DashboardContentState extends State<DashboardContent> {
     return models;
   }
 
+  bool validateStreet(StreetModel data) {
+    var isValidated = true;
+    if (companySelected != null) {
+      if (!data.referalFrom2.contains(companySelected.referal)) {
+        isValidated = false;
+      }
+    }
+    return isValidated;
+  }
 }
