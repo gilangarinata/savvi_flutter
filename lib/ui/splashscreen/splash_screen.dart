@@ -16,17 +16,14 @@ class SplashScreen extends StatelessWidget {
 
     Future<void> _getPrefData() async{
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      bool isLoggedIn = await prefs.containsKey(PrefData.USER_ID);
+      bool isLoggedIn = prefs.containsKey(PrefData.USER_ID);
       print(isLoggedIn.toString());
       if (isLoggedIn) {
           Tools.changeScreen(context, FilterScreen());
-          // Tools.finish(context);
         } else {
           Tools.changeScreen(context, IntroductionScreen());
-          // Tools.finish(context);
         }
     }
-
     Timer(Duration(seconds: 3), (){
       _getPrefData();
     });

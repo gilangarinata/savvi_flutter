@@ -26,6 +26,8 @@ import 'package:mylamp_flutter_v4_stable/widget/slider.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 
 class HardwareDetailScreen extends StatefulWidget {
   String hardwareId;
@@ -203,7 +205,7 @@ class _DashboardContentState extends State<DashboardContent> {
                   }
                 }), // overflow men
             Visibility(
-              visible: Platform.isAndroid,
+              visible: !kIsWeb,
               child: IconButton(
                   icon: Icon(
                     item != null
